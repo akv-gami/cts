@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTS Consulting | Onboarding Legal</title>
+    <style>
+        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f8fafc; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--primary); display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        input[type="text"], input[type="checkbox"] { width: 100%; padding: 10px; margin: 10px 0 20px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #2563eb; }
+        #result { margin-top: 20px; padding: 15px; background: #ecfdf5; color: #065f46; border-radius: 6px; display: none; font-size: 0.9em;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Constituye tu LLC</h2>
+    <p>Motor de validación tributaria CTS</p>
+    
+    <label>Nombre de la Empresa (sin LLC)</label>
+    <input type="text" id="bizName" placeholder="Ej: TechStore">
+
+    <label>RUT del Titular (Chile)</label>
+    <input type="text" id="rut" placeholder="12.345.678-9">
+
+    <button onclick="submitForm()">Validar Estructura</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    async function submitForm() {
+        const payload = {
+            businessName: document.getElementById('bizName').value,
+            ownerRut: document.getElementById('rut').value,
+            ownerName: "Cliente Demo",
+            hasPhysicalPresenceInUs: false
+        };
+
+        const response = await fetch('/api/llc/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <strong>Completado:</strong> ${data.businessName} creada.<br>
+            <strong>Estado:</strong> ${data.status}<br>
+            <strong>Form 5472 requerido:</strong> ${data.requiresForm5472 ? "Sí" : "No"}
+        `;
+    }
+</script>
+
+</body>
+</html>
