@@ -4,5 +4,6 @@ public record LlcRequestDto(
     String businessName, 
     String ownerRut, 
     String ownerName,
+    String stateOfFormation,
     boolean hasPhysicalPresenceInUs
 ) {}

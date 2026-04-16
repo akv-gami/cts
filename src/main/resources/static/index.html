@@ -3,59 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTS Consulting | Onboarding Legal</title>
+    <title>CTS Consulting | Dashboard</title>
     <style>
-        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f8fafc; }
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--primary); display: flex; justify-content: center; padding-top: 50px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        input[type="text"], input[type="checkbox"] { width: 100%; padding: 10px; margin: 10px 0 20px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #2563eb; }
-        #result { margin-top: 20px; padding: 15px; background: #ecfdf5; color: #065f46; border-radius: 6px; display: none; font-size: 0.9em;}
+        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f1f5f9; --surface: #ffffff; --error: #ef4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--primary); padding: 40px; display: flex; gap: 30px; justify-content: center; }
+        .card { background: var(--surface); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 350px; }
+        .dashboard { flex-grow: 1; max-width: 800px; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .input-error { border-color: var(--error) !important; }
+        .error-text { color: var(--error); font-size: 12px; margin-bottom: 10px; display: none; }
+        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; background: #fef3c7; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Constituye tu LLC</h2>
-    <p>Motor de validación tributaria CTS</p>
-    
-    <label>Nombre de la Empresa (sin LLC)</label>
+<div class="card">
+    <h2>Nueva LLC</h2>
+    <label>Nombre de Empresa</label>
     <input type="text" id="bizName" placeholder="Ej: TechStore">
 
-    <label>RUT del Titular (Chile)</label>
-    <input type="text" id="rut" placeholder="12.345.678-9">
+    <label>Estado (Jurisdicción)</label>
+    <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
 
-    <button onclick="submitForm()">Validar Estructura</button>
+    <label>RUT del Titular</label>
+    <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
+    <div id="rutError" class="error-text">RUT no válido</div>
 
-    <div id="result"></div>
+    <button onclick="submitForm()">Registrar LLC</button>
+</div>
+
+<div class="dashboard">
+    <h2>Portafolio</h2>
+    <table id="llcTable">
+        <thead>
+            <tr><th>Empresa</th><th>Estado</th><th>Jurisdicción</th><th>Fecha</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 </div>
 
 <script>
+    function formatState(el) {
+        el.value = el.value.replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    function formatRUT(el) {
+        let value = el.value.replace(/[^0-9kK]/g, '');
+        if (value.length <= 1) {
+            el.value = value;
+            return;
+        }
+        let body = value.slice(0, -1);
+        let dv = value.slice(-1).toUpperCase();
+        el.value = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + dv;
+        document.getElementById('rutError').style.display = 'none';
+        el.classList.remove('input-error');
+    }
+
+    function validateRUT(rut) {
+        let clean = rut.replace(/[^0-9kK]/g, '');
+        if (clean.length < 8) return false;
+        let body = clean.slice(0, -1);
+        let dv = clean.slice(-1).toLowerCase();
+        let sum = 0, mul = 2;
+        for (let i = body.length - 1; i >= 0; i--) {
+            sum += mul * body[i];
+            mul = mul === 7 ? 2 : mul + 1;
+        }
+        let res = 11 - (sum % 11);
+        let expected = res === 11 ? '0' : res === 10 ? 'k' : res.toString();
+        return dv === expected;
+    }
+
     async function submitForm() {
+        const rutEl = document.getElementById('rut');
+        if (!validateRUT(rutEl.value)) {
+            rutEl.classList.add('input-error');
+            document.getElementById('rutError').style.display = 'block';
+            return;
+        }
+
         const payload = {
             businessName: document.getElementById('bizName').value,
-            ownerRut: document.getElementById('rut').value,
-            ownerName: "Cliente Demo",
+            ownerRut: rutEl.value,
+            stateOfFormation: document.getElementById('state').value,
+            ownerName: "Admin",
             hasPhysicalPresenceInUs: false
         };
 
-        const response = await fetch('/api/llc/onboarding', {
+        await fetch('/api/llc/onboarding', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        const data = await response.json();
-        const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `
-            <strong>Completado:</strong> ${data.businessName} creada.<br>
-            <strong>Estado:</strong> ${data.status}<br>
-            <strong>Form 5472 requerido:</strong> ${data.requiresForm5472 ? "Sí" : "No"}
-        `;
+        document.querySelectorAll('input').forEach(i => i.value = '');
+        loadData();
     }
-</script>
 
+    async function loadData() {
+        const res = await fetch('/api/llc/all');
+        const data = await res.json();
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.map(llc => `
+            <tr>
+                <td>${llc.businessName}</td>
+                <td><span class="badge">${llc.status}</span></td>
+                <td>${llc.stateOfFormation}</td>
+                <td>${llc.creationDate}</td>
+            </tr>
+        `).join('');
+    }
+
+    window.onload = loadData;
+</script>
 </body>
 </html>

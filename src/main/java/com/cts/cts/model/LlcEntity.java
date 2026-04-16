@@ -21,7 +21,6 @@ public class LlcEntity {
     private String stateOfFormation = "Wyoming";
     private String ownerRut;
     private String status;
-    
     private LocalDate creationDate;
     private boolean requiresForm5472;
 }
