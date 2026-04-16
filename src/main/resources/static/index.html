@@ -3,78 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTS Consulting | Dashboard</title>
+    <title>CTS Consulting</title>
     <style>
-        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f1f5f9; --surface: #ffffff; --error: #ef4444; --success: #10b981; }
+        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f1f5f9; --surface: #ffffff; --error: #ef4444; }
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--primary); padding: 40px; display: flex; gap: 30px; justify-content: center; margin: 0; }
-        .card { background: var(--surface); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 360px; flex-shrink: 0; }
-        .dashboard { flex-grow: 1; max-width: 900px; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--primary); padding: 40px; display: flex; justify-content: center; margin: 0; }
+        .card { background: var(--surface); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 360px; }
+        .dashboard-container { display: flex; gap: 30px; width: 100%; max-width: 1300px; }
+        .dashboard { flex-grow: 1; }
         h2 { margin-top: 0; font-size: 1.4rem; }
         label { font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px; }
-        input[type="text"], input[type="email"] { width: 100%; padding: 11px 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; outline: none; }
-        input:focus { border-color: var(--accent); }
+        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 11px 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
         .input-error { border-color: var(--error) !important; }
         .error-text { color: var(--error); font-size: 12px; margin-top: -12px; margin-bottom: 12px; display: none; }
-        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s; }
         button:hover { background: #2563eb; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        th { background: #f8fafc; padding: 12px 15px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
+        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-top: 10px; }
+        .btn-logout { background: #ef4444; width: auto; padding: 8px 16px; float: right; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th { background: #f8fafc; padding: 12px 15px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
         td { padding: 14px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-        tr:last-child td { border-bottom: none; }
         .badge-pending { background: #fef3c7; color: #92400e; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
         .badge-5472 { background: #fee2e2; color: #b91c1c; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
         .badge-ok { background: #d1fae5; color: #065f46; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
         .empty-state { text-align: center; padding: 40px; color: #94a3b8; }
+        #authView, #dashboardView { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Nueva LLC</h2>
-
-    <label>Nombre de Empresa</label>
-    <input type="text" id="bizName" placeholder="Ej: TechStore">
-
-    <label>Estado de Formación</label>
-    <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
-
-    <label>Nombre del Titular</label>
-    <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
-
-    <label>Correo del Titular</label>
-    <input type="email" id="ownerEmail" placeholder="juan@email.com">
-
-    <label>RUT del Titular</label>
-    <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
-    <div id="rutError" class="error-text">RUT no válido</div>
-
-    <button onclick="submitForm()">Registrar LLC</button>
+<div id="authView" class="card" style="margin: auto;">
+    <h2 id="authTitle">Iniciar Sesión</h2>
+    <div id="authError" class="error-text" style="display: none;">Credenciales incorrectas</div>
+    
+    <input type="text" id="authName" placeholder="Tu Nombre" style="display: none;">
+    <input type="email" id="authEmail" placeholder="correo@ejemplo.com">
+    <input type="password" id="authPassword" placeholder="Contraseña">
+    
+    <button id="authActionBtn" onclick="handleAuth()">Entrar</button>
+    <button class="btn-secondary" onclick="toggleAuthMode()">Crear una cuenta</button>
 </div>
 
-<div class="dashboard">
-    <h2>Portafolio de LLCs</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Empresa</th>
-                <th>Titular</th>
-                <th>Jurisdicción</th>
-                <th>Annual Report</th>
-                <th>Form 5472</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <tr><td colspan="6" class="empty-state">Cargando...</td></tr>
-        </tbody>
-    </table>
+<div id="dashboardView" class="dashboard-container">
+    <div class="card">
+        <h2>Nueva LLC</h2>
+        <label>Nombre de Empresa</label>
+        <input type="text" id="bizName" placeholder="Ej: TechStore">
+        <label>Estado de Formación</label>
+        <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
+        <label>Nombre del Titular</label>
+        <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
+        <label>Correo del Titular</label>
+        <input type="email" id="ownerEmail" placeholder="juan@email.com">
+        <label>RUT del Titular</label>
+        <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
+        <div id="rutError" class="error-text">RUT no válido</div>
+        <button onclick="submitForm()">Registrar LLC</button>
+    </div>
+
+    <div class="dashboard">
+        <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+        <h2>Mi Portafolio</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Titular</th>
+                    <th>Jurisdicción</th>
+                    <th>Annual Report</th>
+                    <th>Form 5472</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    function formatState(el) {
-        el.value = el.value.replace(/\b\w/g, l => l.toUpperCase());
+    let isLoginMode = true;
+
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        document.getElementById('authTitle').innerText = isLoginMode ? 'Iniciar Sesión' : 'Registro de Cliente';
+        document.getElementById('authActionBtn').innerText = isLoginMode ? 'Entrar' : 'Registrarse';
+        document.querySelector('.btn-secondary').innerText = isLoginMode ? 'Crear una cuenta' : 'Ya tengo cuenta';
+        document.getElementById('authName').style.display = isLoginMode ? 'none' : 'block';
+        document.getElementById('authError').style.display = 'none';
     }
+
+    async function handleAuth() {
+        const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+        const payload = {
+            email: document.getElementById('authEmail').value,
+            password: document.getElementById('authPassword').value
+        };
+        if (!isLoginMode) payload.name = document.getElementById('authName').value;
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            localStorage.setItem('jwtToken', data.token);
+            checkAuth();
+        } else {
+            document.getElementById('authError').style.display = 'block';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        checkAuth();
+    }
+
+    function checkAuth() {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            document.getElementById('authView').style.display = 'none';
+            document.getElementById('dashboardView').style.display = 'flex';
+            loadData();
+        } else {
+            document.getElementById('authView').style.display = 'block';
+            document.getElementById('dashboardView').style.display = 'none';
+        }
+    }
+
+    function formatState(el) { el.value = el.value.replace(/\b\w/g, l => l.toUpperCase()); }
 
     function formatRUT(el) {
         let value = el.value.replace(/[^0-9kK]/g, '');
@@ -92,10 +150,7 @@
         let body = clean.slice(0, -1);
         let dv = clean.slice(-1).toLowerCase();
         let sum = 0, mul = 2;
-        for (let i = body.length - 1; i >= 0; i--) {
-            sum += mul * Number(body[i]);
-            mul = mul === 7 ? 2 : mul + 1;
-        }
+        for (let i = body.length - 1; i >= 0; i--) { sum += mul * Number(body[i]); mul = mul === 7 ? 2 : mul + 1; }
         let res = 11 - (sum % 11);
         let expected = res === 11 ? '0' : res === 10 ? 'k' : res.toString();
         return dv === expected;
@@ -103,11 +158,7 @@
 
     async function submitForm() {
         const rutEl = document.getElementById('rut');
-        if (!validateRUT(rutEl.value)) {
-            rutEl.classList.add('input-error');
-            document.getElementById('rutError').style.display = 'block';
-            return;
-        }
+        if (!validateRUT(rutEl.value)) { rutEl.classList.add('input-error'); document.getElementById('rutError').style.display = 'block'; return; }
 
         const payload = {
             businessName: document.getElementById('bizName').value,
@@ -120,29 +171,32 @@
 
         const res = await fetch('/api/llc/onboarding', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            },
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-            const errors = await res.json();
-            alert('Error: ' + JSON.stringify(errors));
-            return;
+        if (res.ok) {
+            document.querySelectorAll('#dashboardView input').forEach(i => i.value = '');
+            loadData();
+        } else if (res.status === 403) {
+            logout();
         }
-
-        document.querySelectorAll('input').forEach(i => i.value = '');
-        loadData();
     }
 
     async function loadData() {
-        const res = await fetch('/api/llc/all');
+        const res = await fetch('/api/llc/all', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }
+        });
+
+        if (res.status === 403) { logout(); return; }
+
         const data = await res.json();
         const tbody = document.getElementById('tableBody');
 
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay LLCs registradas aún</td></tr>';
-            return;
-        }
+        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay LLCs registradas</td></tr>'; return; }
 
         tbody.innerHTML = data.map(llc => `
             <tr>
@@ -150,15 +204,13 @@
                 <td>${llc.ownerName}<br><span style="color:#94a3b8;font-size:11px">${llc.ownerEmail}</span></td>
                 <td>${llc.stateOfFormation}</td>
                 <td>${llc.annualReportDueDate}</td>
-                <td>${llc.requiresForm5472
-                    ? '<span class="badge-5472">Requiere 5472</span>'
-                    : '<span class="badge-ok">Exento</span>'}</td>
+                <td>${llc.requiresForm5472 ? '<span class="badge-5472">Requiere 5472</span>' : '<span class="badge-ok">Exento</span>'}</td>
                 <td><span class="badge-pending">${llc.status}</span></td>
             </tr>
         `).join('');
     }
 
-    window.onload = loadData;
+    window.onload = checkAuth;
 </script>
 </body>
 </html>

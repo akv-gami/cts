@@ -3,7 +3,9 @@ package com.cts.cts.service;
 import com.cts.cts.dto.LlcRequestDto;
 import com.cts.cts.dto.LlcResponseDto;
 import com.cts.cts.model.LlcEntity;
+import com.cts.cts.model.UserEntity;
 import com.cts.cts.repository.LlcRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,8 +19,14 @@ public class TaxLogicService {
         this.llcRepository = llcRepository;
     }
 
+    private Long getCurrentUserId() {
+        UserEntity user = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
+    }
+
     public LlcResponseDto processNewLlc(LlcRequestDto request) {
         LlcEntity entity = new LlcEntity();
+        entity.setUserId(getCurrentUserId());
         entity.setBusinessName(request.businessName().trim() + " LLC");
         entity.setOwnerName(request.ownerName().trim());
         entity.setOwnerRut(request.ownerRut().trim());
@@ -35,7 +43,7 @@ public class TaxLogicService {
     }
 
     public List<LlcResponseDto> getAllLlcs() {
-        return llcRepository.findAll().stream()
+        return llcRepository.findByUserId(getCurrentUserId()).stream()
                 .map(this::toResponse)
                 .toList();
     }

@@ -17,6 +17,8 @@ public class LlcEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId;
+
     private String businessName;
     private String stateOfFormation;
     private String ownerName;

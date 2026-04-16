@@ -1,0 +1,29 @@
+package com.cts.cts.controller;
+
+import com.cts.cts.dto.AuthRequestDto;
+import com.cts.cts.dto.AuthResponseDto;
+import com.cts.cts.dto.RegisterRequestDto;
+import com.cts.cts.service.AuthService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto request) {
+        return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+}
