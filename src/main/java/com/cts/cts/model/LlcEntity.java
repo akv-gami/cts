@@ -18,9 +18,13 @@ public class LlcEntity {
     private Long id;
 
     private String businessName;
-    private String stateOfFormation = "Wyoming";
+    private String stateOfFormation;
+    private String ownerName;
     private String ownerRut;
+    private String ownerEmail;
+    private String ein;
     private String status;
     private LocalDate creationDate;
+    private LocalDate annualReportDueDate;
     private boolean requiresForm5472;
 }

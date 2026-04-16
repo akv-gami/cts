@@ -1,8 +1,9 @@
 package com.cts.cts.controller;
 
 import com.cts.cts.dto.LlcRequestDto;
-import com.cts.cts.model.LlcEntity;
+import com.cts.cts.dto.LlcResponseDto;
 import com.cts.cts.service.TaxLogicService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -18,12 +19,12 @@ public class LlcController {
     }
 
     @PostMapping("/onboarding")
-    public ResponseEntity<LlcEntity> createLlc(@RequestBody LlcRequestDto request) {
+    public ResponseEntity<LlcResponseDto> createLlc(@Valid @RequestBody LlcRequestDto request) {
         return ResponseEntity.ok(taxLogicService.processNewLlc(request));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<LlcEntity>> getAllLlcs() {
+    public ResponseEntity<List<LlcResponseDto>> getAllLlcs() {
         return ResponseEntity.ok(taxLogicService.getAllLlcs());
     }
 }
