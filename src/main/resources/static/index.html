@@ -20,6 +20,8 @@
         button:hover { background: #2563eb; }
         .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-top: 10px; }
         .btn-logout { background: #ef4444; width: auto; padding: 8px 16px; float: right; }
+        .btn-pdf { background: #10b981; padding: 6px 12px; font-size: 12px; border-radius: 4px; width: auto; }
+        .btn-pdf:hover { background: #059669; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
         th { background: #f8fafc; padding: 12px 15px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
         td { padding: 14px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
@@ -35,11 +37,9 @@
 <div id="authView" class="card" style="margin: auto;">
     <h2 id="authTitle">Iniciar Sesión</h2>
     <div id="authError" class="error-text" style="display: none;">Credenciales incorrectas</div>
-    
     <input type="text" id="authName" placeholder="Tu Nombre" style="display: none;">
     <input type="email" id="authEmail" placeholder="correo@ejemplo.com">
     <input type="password" id="authPassword" placeholder="Contraseña">
-    
     <button id="authActionBtn" onclick="handleAuth()">Entrar</button>
     <button class="btn-secondary" onclick="toggleAuthMode()">Crear una cuenta</button>
 </div>
@@ -70,9 +70,9 @@
                     <th>Empresa</th>
                     <th>Titular</th>
                     <th>Jurisdicción</th>
-                    <th>Annual Report</th>
                     <th>Form 5472</th>
                     <th>Estado</th>
+                    <th>Documentos</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -186,6 +186,26 @@
         }
     }
 
+    async function downloadPdf(id, name) {
+        const res = await fetch(`/api/llc/${id}/pdf`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }
+        });
+        
+        if (res.status === 403) { logout(); return; }
+        
+        if (res.ok) {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name.replace(/ /g, '_') + '_OA.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        }
+    }
+
     async function loadData() {
         const res = await fetch('/api/llc/all', {
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }
@@ -203,9 +223,9 @@
                 <td><strong>${llc.businessName}</strong></td>
                 <td>${llc.ownerName}<br><span style="color:#94a3b8;font-size:11px">${llc.ownerEmail}</span></td>
                 <td>${llc.stateOfFormation}</td>
-                <td>${llc.annualReportDueDate}</td>
                 <td>${llc.requiresForm5472 ? '<span class="badge-5472">Requiere 5472</span>' : '<span class="badge-ok">Exento</span>'}</td>
                 <td><span class="badge-pending">${llc.status}</span></td>
+                <td><button class="btn-pdf" onclick="downloadPdf(${llc.id}, '${llc.businessName}')">Descargar OA</button></td>
             </tr>
         `).join('');
     }

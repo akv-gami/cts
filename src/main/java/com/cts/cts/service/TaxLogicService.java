@@ -48,6 +48,14 @@ public class TaxLogicService {
                 .toList();
     }
 
+    public LlcResponseDto getLlcById(Long id) {
+        LlcEntity entity = llcRepository.findById(id).orElseThrow(() -> new RuntimeException("LLC no encontrada"));
+        if (!entity.getUserId().equals(getCurrentUserId())) {
+            throw new RuntimeException("Acceso denegado");
+        }
+        return toResponse(entity);
+    }
+
     private String capitalizeWords(String text) {
         String[] words = text.trim().split("\\s+");
         StringBuilder result = new StringBuilder();
