@@ -2,9 +2,11 @@ package com.cts.cts.service;
 
 import com.cts.cts.dto.LlcRequestDto;
 import com.cts.cts.dto.LlcResponseDto;
+import com.cts.cts.dto.UpdateLlcStatusDto;
 import com.cts.cts.exception.AccessDeniedException;
 import com.cts.cts.exception.NotFoundException;
 import com.cts.cts.model.LlcEntity;
+import com.cts.cts.model.LlcStatus;
 import com.cts.cts.model.UserEntity;
 import com.cts.cts.repository.LlcRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,9 +29,8 @@ public class TaxLogicService {
     }
 
     public LlcResponseDto processNewLlc(LlcRequestDto request) {
-        LlcEntity entity = new LlcEntity();
         String normalizedState = capitalizeWords(request.stateOfFormation());
-
+        LlcEntity entity = new LlcEntity();
         entity.setUserId(getCurrentUserId());
         entity.setBusinessName(request.businessName().trim() + " LLC");
         entity.setOwnerName(request.ownerName().trim());
@@ -38,17 +39,20 @@ public class TaxLogicService {
         entity.setStateOfFormation(normalizedState);
         entity.setCreationDate(LocalDate.now());
         entity.setAnnualReportDueDate(calculateAnnualReportDueDate(normalizedState));
-        entity.setStatus("PENDING");
+        entity.setStatus(LlcStatus.PENDING);
         entity.setRequiresForm5472(!request.hasPhysicalPresenceInUs());
         entity.setEin(null);
-
         return toResponse(llcRepository.save(entity));
     }
 
     public List<LlcResponseDto> getAllLlcs() {
         return llcRepository.findByUserId(getCurrentUserId()).stream()
-                .map(this::toResponse)
-                .toList();
+                .map(this::toResponse).toList();
+    }
+
+    public List<LlcResponseDto> getAllLlcsAdmin() {
+        return llcRepository.findAll().stream()
+                .map(this::toResponse).toList();
     }
 
     public LlcResponseDto getLlcById(Long id) {
@@ -58,6 +62,25 @@ public class TaxLogicService {
             throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
         }
         return toResponse(entity);
+    }
+
+    public LlcResponseDto getLlcByIdAdmin(Long id) {
+        return toResponse(llcRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LLC no encontrada")));
+    }
+
+    public LlcResponseDto updateLlcStatus(Long id, UpdateLlcStatusDto dto) {
+        LlcEntity entity = llcRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
+        try {
+            entity.setStatus(LlcStatus.valueOf(dto.status().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Estado inválido. Valores permitidos: PENDING, ACTIVE, COMPLETED");
+        }
+        if (dto.ein() != null && !dto.ein().isBlank()) {
+            entity.setEin(dto.ein().trim());
+        }
+        return toResponse(llcRepository.save(entity));
     }
 
     private String capitalizeWords(String text) {
@@ -92,7 +115,7 @@ public class TaxLogicService {
             entity.getOwnerRut(),
             entity.getOwnerEmail(),
             entity.getEin(),
-            entity.getStatus(),
+            entity.getStatus() != null ? entity.getStatus().name() : null,
             entity.getCreationDate(),
             entity.getAnnualReportDueDate(),
             entity.isRequiresForm5472()

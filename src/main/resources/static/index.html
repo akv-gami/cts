@@ -3,239 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTS Consulting - Tracker</title>
+    <title>CTS Consulting</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #111827; --subtext: #6b7280; --accent: #2563eb; --accent-hover: #1d4ed8; --bg: #f9fafb; --surface: #ffffff; --border: #e5e7eb; --error: #ef4444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--primary); -webkit-font-smoothing: antialiased; }
-        
-        .navbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
-        
-        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .card { background: var(--surface); padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); width: 100%; max-width: 400px; border: 1px solid var(--border); }
-        .card h2 { font-size: 24px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.5px; text-align: center; }
-        
-        .main-container { max-width: 1200px; margin: 40px auto; padding: 0 32px; }
-        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
-        .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
-        .page-header p { color: var(--subtext); font-size: 14px; margin-top: 4px; }
-        
-        label { font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px; }
-        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 10px 14px; margin-bottom: 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .input-error { border-color: var(--error) !important; }
-        .error-text { color: var(--error); font-size: 13px; font-weight: 500; margin-top: -12px; margin-bottom: 12px; display: none; text-align: center; }
-        
-        button { background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); width: 100%; }
-        button:hover { background: var(--accent-hover); }
-        .btn-secondary { background: transparent; color: var(--subtext); border: none; box-shadow: none; margin-top: 8px; font-weight: 500; }
-        .btn-secondary:hover { background: #f3f4f6; color: var(--primary); }
-        .btn-logout { background: transparent; color: var(--subtext); border: 1px solid var(--border); width: auto; font-size: 13px; box-shadow: none; }
-        .btn-logout:hover { background: #f3f4f6; color: var(--primary); }
-        .btn-add { width: auto; display: flex; align-items: center; gap: 8px; }
-        .btn-pdf { background: white; color: #10b981; border: 1px solid #10b981; padding: 6px 12px; font-size: 12px; font-weight: 600; width: auto; box-shadow: none; }
-        .btn-pdf:hover { background: #10b981; color: white; }
-        
-        .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background: #f8fafc; padding: 14px 24px; font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
-        td { padding: 16px 24px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--primary); }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background: #f8fafc; }
-        .td-sub { color: var(--subtext); font-size: 13px; display: block; margin-top: 2px; }
-        
-        .badge-pending { background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .badge-5472 { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .badge-ok { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--subtext); font-size: 14px; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; }
-        .modal-content { background: var(--surface); width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; transform: translateY(0); }
-        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 18px; font-weight: 600; }
-        .btn-close { background: transparent; color: var(--subtext); border: none; font-size: 24px; width: auto; padding: 0; line-height: 1; box-shadow: none; }
-        .btn-close:hover { color: var(--primary); background: transparent; }
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface-2: #22263a;
+            --border: #2a2d3e;
+            --border-2: #363a52;
+            --text: #e8eaf0;
+            --subtext: #7b82a0;
+            --accent: #4f6ef7;
+            --accent-hover: #3d5be8;
+            --accent-glow: rgba(79, 110, 247, 0.15);
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --purple: #a78bfa;
+            --purple-bg: rgba(167, 139, 250, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* AUTH */
+        .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 0%, rgba(79,110,247,0.12) 0%, transparent 70%), var(--bg); }
+        .auth-box { width: 100%; max-width: 420px; padding: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
+        .auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; justify-content: center; }
+        .auth-logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .auth-logo-icon svg { width: 20px; height: 20px; color: white; }
+        .auth-logo span { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .auth-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; text-align: center; }
+        .auth-box p.auth-sub { text-align: center; color: var(--subtext); font-size: 14px; margin-bottom: 28px; }
+        .auth-error { background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+
+        /* FORM ELEMENTS */
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 13px; font-weight: 500; color: var(--subtext); margin-bottom: 6px; }
+        .field input { width: 100%; padding: 11px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
+        .field input::placeholder { color: #4a4f6a; }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .field input.err { border-color: var(--danger); }
+        .field .field-error { font-size: 12px; color: #fca5a5; margin-top: 5px; display: none; }
+
+        /* BUTTONS */
+        .btn { padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+        .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-ghost { background: transparent; color: var(--subtext); border: 1px solid var(--border-2); }
+        .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+        .btn-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
+        .btn-success:hover { background: rgba(34,197,94,0.2); }
+        .btn-link { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 0; margin-top: 12px; display: block; text-align: center; width: 100%; }
+        .btn-link:hover { text-decoration: underline; }
+
+        /* NAVBAR */
+        .navbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 40; }
+        .nav-logo { display: flex; align-items: center; gap: 9px; }
+        .nav-logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .nav-logo-icon svg { width: 16px; height: 16px; color: white; }
+        .nav-logo span { font-size: 16px; font-weight: 700; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-badge { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(79,110,247,0.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+        /* LAYOUT */
+        .main { max-width: 1280px; margin: 0 auto; padding: 36px 28px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+        .page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .page-sub { color: var(--subtext); font-size: 14px; margin-top: 4px; }
+
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+        .stat-label { font-size: 12px; font-weight: 500; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+        .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+        .stat-meta { font-size: 12px; color: var(--subtext); margin-top: 6px; }
+        .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+        .stat-icon svg { width: 18px; height: 18px; }
+        .si-blue { background: var(--accent-glow); color: var(--accent); }
+        .si-green { background: var(--success-bg); color: var(--success); }
+        .si-yellow { background: var(--warning-bg); color: var(--warning); }
+        .si-purple { background: var(--purple-bg); color: var(--purple); }
+
+        /* TABLE */
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .table-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+        .table-title { font-size: 15px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { padding: 12px 24px; font-size: 11px; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.06em; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); text-align: left; }
+        tbody td { padding: 16px 24px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.02); }
+        .cell-name { font-weight: 600; color: var(--text); }
+        .cell-sub { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+        .empty-state { text-align: center; padding: 64px 20px; color: var(--subtext); }
+        .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+        /* BADGES */
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+        .badge-pending { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+        .badge-pending::before { background: var(--warning); }
+        .badge-active { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+        .badge-active::before { background: var(--success); }
+        .badge-completed { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+        .badge-completed::before { background: var(--purple); }
+        .badge-5472 { background: var(--danger-bg); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .badge-5472::before { background: var(--danger); }
+        .badge-ok { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+        .badge-ok::before { background: var(--success); }
+
+        /* MODAL */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .overlay.open { display: flex; }
+        .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+        .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid var(--border); }
+        .modal-head h3 { font-size: 16px; font-weight: 600; }
+        .btn-x { background: var(--surface-2); border: 1px solid var(--border-2); color: var(--subtext); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; line-height: 1; }
+        .btn-x:hover { color: var(--text); }
         .modal-body { padding: 24px; }
-        
-        #authSection { display: none; }
-        #appSection { display: none; }
+
+        /* ADMIN SPECIFIC */
+        .admin-banner { background: linear-gradient(135deg, rgba(167,139,250,0.15) 0%, rgba(79,110,247,0.15) 100%); border: 1px solid rgba(167,139,250,0.2); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+        .admin-banner svg { width: 20px; height: 20px; color: var(--purple); flex-shrink: 0; }
+        .admin-banner span { font-size: 13px; color: #c4b5fd; }
+        .admin-banner strong { color: var(--purple); }
+
+        .select-field { width: 100%; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; cursor: pointer; }
+        .select-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+        #authSection, #appSection { display: none; }
     </style>
 </head>
 <body>
 
-<div id="authSection" class="auth-container">
-    <div class="card">
-        <h2 id="authTitle">Iniciar Sesión</h2>
-        <div id="authError" class="error-text"></div>
-        <input type="text" id="authName" placeholder="Nombre completo" style="display: none;">
-        <input type="email" id="authEmail" placeholder="correo@ejemplo.com">
-        <input type="password" id="authPassword" placeholder="Contraseña">
-        <button id="authActionBtn" onclick="handleAuth()">Entrar</button>
-        <button class="btn-secondary" onclick="toggleAuthMode()">Crear una cuenta nueva</button>
+<div id="authSection" class="auth-wrap">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <div class="auth-logo-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <span>CTS Consulting</span>
+        </div>
+        <h2 id="authTitle">Bienvenido de vuelta</h2>
+        <p class="auth-sub" id="authSub">Ingresa a tu panel de gestión corporativa</p>
+        <div id="authError" class="auth-error"></div>
+        <div class="field" id="nameField" style="display:none;">
+            <label>Nombre completo</label>
+            <input type="text" id="authName" placeholder="Juan Pérez">
+        </div>
+        <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="authEmail" placeholder="correo@empresa.com">
+        </div>
+        <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" id="authBtn" onclick="handleAuth()">Iniciar Sesión</button>
+        <button class="btn-link" onclick="toggleAuth()">¿No tienes cuenta? Crear una nueva</button>
     </div>
 </div>
 
 <div id="appSection">
     <nav class="navbar">
-        <div class="logo">CTS Consulting</div>
-        <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+        <div class="nav-logo">
+            <div class="nav-logo-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <span>CTS Consulting</span>
+        </div>
+        <div class="nav-right">
+            <span class="nav-badge" id="roleBadge"></span>
+            <button class="btn btn-ghost btn-sm" onclick="logout()">Cerrar sesión</button>
+        </div>
     </nav>
 
-    <main class="main-container">
+    <main class="main" id="userView" style="display:none;">
         <div class="page-header">
             <div>
-                <h1>Tracker de Entidades</h1>
-                <p>Gestiona tu portafolio y obligaciones corporativas en EE.UU.</p>
+                <div class="page-title">Mis Entidades</div>
+                <div class="page-sub">Gestiona tu portafolio corporativo y obligaciones tributarias</div>
             </div>
-            <button class="btn-add" onclick="openModal()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            <button class="btn btn-primary" onclick="openModal('llcModal')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v14M5 12h14"/></svg>
                 Registrar LLC
             </button>
         </div>
 
-        <div class="table-wrapper">
+        <div class="stats-grid" id="userStats"></div>
+
+        <div class="table-card">
+            <div class="table-toolbar">
+                <span class="table-title">Portafolio de LLCs</span>
+            </div>
             <table>
                 <thead>
                     <tr>
                         <th>Entidad</th>
                         <th>Titular</th>
                         <th>Jurisdicción</th>
-                        <th>Obligaciones</th>
+                        <th>Annual Report</th>
+                        <th>Form 5472</th>
                         <th>Estado</th>
-                        <th>Documentos</th>
+                        <th>EIN</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <main class="main" id="adminView" style="display:none;">
+        <div class="page-header">
+            <div>
+                <div class="page-title">Panel Administrador</div>
+                <div class="page-sub">Gestión global de todas las entidades registradas</div>
+            </div>
+        </div>
+
+        <div class="admin-banner">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Estás operando como <strong>Administrador</strong>. Puedes ver y gestionar todas las entidades, actualizar su estado y asignar el EIN.</span>
+        </div>
+
+        <div class="stats-grid" id="adminStats"></div>
+
+        <div class="table-card">
+            <div class="table-toolbar">
+                <span class="table-title">Todas las LLCs</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Entidad</th>
+                        <th>Titular</th>
+                        <th>RUT</th>
+                        <th>Jurisdicción</th>
+                        <th>Form 5472</th>
+                        <th>Estado</th>
+                        <th>EIN</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
             </table>
         </div>
     </main>
 </div>
 
-<div id="llcModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Nueva Entidad</h3>
-            <button class="btn-close" onclick="closeModal()">&times;</button>
+<!-- Modal Nueva LLC -->
+<div id="llcModal" class="overlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Registrar nueva LLC</h3>
+            <button class="btn-x" onclick="closeModal('llcModal')">&times;</button>
         </div>
-        <div class="modal-body" id="llcForm">
-            <label>Nombre de la Empresa</label>
-            <input type="text" id="bizName" placeholder="Ej: TechStore">
-            <label>Estado de Formación</label>
-            <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
-            <label>Nombre del Titular</label>
-            <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
-            <label>Correo del Titular</label>
-            <input type="email" id="ownerEmail" placeholder="juan@email.com">
-            <label>RUT del Titular</label>
-            <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
-            <div id="rutError" class="error-text" style="text-align:left;">El RUT ingresado no es válido</div>
-            <button onclick="submitForm()" style="margin-top: 8px;">Completar Registro</button>
+        <div class="modal-body">
+            <div class="field">
+                <label>Nombre de la empresa</label>
+                <input type="text" id="bizName" placeholder="Ej: TechStore (sin LLC)">
+            </div>
+            <div class="field">
+                <label>Estado de formación</label>
+                <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
+            </div>
+            <div class="field">
+                <label>Nombre del titular</label>
+                <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
+            </div>
+            <div class="field">
+                <label>Correo del titular</label>
+                <input type="email" id="ownerEmail" placeholder="juan@email.com">
+            </div>
+            <div class="field">
+                <label>RUT del titular</label>
+                <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
+                <div class="field-error" id="rutError">El RUT ingresado no es válido</div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:8px;" onclick="submitLlc()">Completar registro</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Estado (Admin) -->
+<div id="editModal" class="overlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Actualizar entidad</h3>
+            <button class="btn-x" onclick="closeModal('editModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editId">
+            <div class="field">
+                <label>Estado</label>
+                <select class="select-field" id="editStatus">
+                    <option value="PENDING">Pendiente</option>
+                    <option value="ACTIVE">Activo</option>
+                    <option value="COMPLETED">Completado</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>EIN (Número de identificación fiscal)</label>
+                <input type="text" id="editEin" placeholder="Ej: 12-3456789">
+            </div>
+            <button class="btn btn-primary" style="margin-top:8px;" onclick="submitUpdate()">Guardar cambios</button>
         </div>
     </div>
 </div>
 
 <script>
     let isLoginMode = true;
+    let userRole = null;
 
-    function toggleAuthMode() {
+    function toggleAuth() {
         isLoginMode = !isLoginMode;
-        document.getElementById('authTitle').innerText = isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta';
-        document.getElementById('authActionBtn').innerText = isLoginMode ? 'Entrar' : 'Registrarse';
-        document.querySelector('.btn-secondary').innerText = isLoginMode ? 'Crear una cuenta nueva' : 'Ya tengo una cuenta';
-        document.getElementById('authName').style.display = isLoginMode ? 'none' : 'block';
+        document.getElementById('authTitle').innerText = isLoginMode ? 'Bienvenido de vuelta' : 'Crear cuenta';
+        document.getElementById('authSub').innerText = isLoginMode ? 'Ingresa a tu panel de gestión corporativa' : 'Únete a CTS Consulting';
+        document.getElementById('authBtn').innerText = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
+        document.querySelector('.btn-link').innerText = isLoginMode ? '¿No tienes cuenta? Crear una nueva' : '¿Ya tienes cuenta? Inicia sesión';
+        document.getElementById('nameField').style.display = isLoginMode ? 'none' : 'block';
         document.getElementById('authError').style.display = 'none';
     }
 
     async function handleAuth() {
         const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
-        const payload = {
-            email: document.getElementById('authEmail').value,
-            password: document.getElementById('authPassword').value
-        };
+        const payload = { email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value };
         if (!isLoginMode) payload.name = document.getElementById('authName').value;
 
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         const errEl = document.getElementById('authError');
 
         if (res.ok) {
             const data = await res.json();
             localStorage.setItem('jwtToken', data.token);
+            localStorage.setItem('userRole', data.role);
             checkAuth();
         } else {
-            if (!isLoginMode && res.status === 400) {
-                const errorText = await res.text();
-                try {
-                    JSON.parse(errorText);
-                    errEl.innerText = "Revisa los datos ingresados";
-                } catch(e) {
-                    errEl.innerText = errorText; 
-                }
-            } else {
-                errEl.innerText = 'Credenciales incorrectas';
-            }
+            const body = await res.json().catch(() => ({}));
+            errEl.innerText = body.error || 'Error al autenticar';
             errEl.style.display = 'block';
         }
     }
 
     function logout() {
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem('userRole');
         checkAuth();
     }
 
     function checkAuth() {
         const token = localStorage.getItem('jwtToken');
+        userRole = localStorage.getItem('userRole');
         if (token) {
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
-            loadData();
+            document.getElementById('roleBadge').innerText = userRole === 'ADMIN' ? 'Admin' : 'Usuario';
+            if (userRole === 'ADMIN') {
+                document.getElementById('adminView').style.display = 'block';
+                document.getElementById('userView').style.display = 'none';
+                loadAdminData();
+            } else {
+                document.getElementById('userView').style.display = 'block';
+                document.getElementById('adminView').style.display = 'none';
+                loadUserData();
+            }
         } else {
             document.getElementById('authSection').style.display = 'flex';
             document.getElementById('appSection').style.display = 'none';
         }
     }
 
-    function openModal() { document.getElementById('llcModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('llcModal').style.display = 'none'; }
+    function token() { return localStorage.getItem('jwtToken'); }
+    function authHeader() { return { 'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json' }; }
 
-    function formatState(el) {
-        el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase());
-    }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.querySelectorAll('.overlay').forEach(el => {
+        el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(el => el.classList.remove('open'));
+    });
+
+    function formatState(el) { el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
 
     function formatRUT(el) {
-        let value = el.value.replace(/[^0-9kK]/g, '');
-        if (value.length <= 1) { el.value = value; return; }
-        let body = value.slice(0, -1);
-        let dv = value.slice(-1).toUpperCase();
-        el.value = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + dv;
+        let v = el.value.replace(/[^0-9kK]/g, '');
+        if (v.length <= 1) { el.value = v; return; }
+        el.value = v.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + v.slice(-1).toUpperCase();
         document.getElementById('rutError').style.display = 'none';
-        el.classList.remove('input-error');
+        el.classList.remove('err');
     }
 
     function validateRUT(rut) {
-        let clean = rut.replace(/[^0-9kK]/g, '');
-        if (clean.length < 8) return false;
-        let body = clean.slice(0, -1);
-        let dv = clean.slice(-1).toLowerCase();
-        let sum = 0, mul = 2;
+        let c = rut.replace(/[^0-9kK]/g, '');
+        if (c.length < 8) return false;
+        let body = c.slice(0, -1), dv = c.slice(-1).toLowerCase(), sum = 0, mul = 2;
         for (let i = body.length - 1; i >= 0; i--) { sum += mul * Number(body[i]); mul = mul === 7 ? 2 : mul + 1; }
         let res = 11 - (sum % 11);
-        let expected = res === 11 ? '0' : res === 10 ? 'k' : res.toString();
-        return dv === expected;
+        return dv === (res === 11 ? '0' : res === 10 ? 'k' : res.toString());
     }
 
-    async function submitForm() {
+    async function submitLlc() {
         const rutEl = document.getElementById('rut');
-        if (!validateRUT(rutEl.value)) { rutEl.classList.add('input-error'); document.getElementById('rutError').style.display = 'block'; return; }
-
+        if (!validateRUT(rutEl.value)) {
+            rutEl.classList.add('err');
+            document.getElementById('rutError').style.display = 'block';
+            return;
+        }
         const payload = {
             businessName: document.getElementById('bizName').value,
             ownerRut: rutEl.value,
@@ -244,68 +428,123 @@
             stateOfFormation: document.getElementById('state').value,
             hasPhysicalPresenceInUs: false
         };
-
-        const res = await fetch('/api/llc/onboarding', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
-            },
-            body: JSON.stringify(payload)
-        });
-
+        const res = await fetch('/api/llc/onboarding', { method: 'POST', headers: authHeader(), body: JSON.stringify(payload) });
         if (res.ok) {
-            document.querySelectorAll('#llcForm input').forEach(i => i.value = '');
-            closeModal();
-            loadData();
-        } else if (res.status === 403) {
-            logout();
-        }
+            document.querySelectorAll('#llcModal input').forEach(i => i.value = '');
+            closeModal('llcModal');
+            loadUserData();
+        } else if (res.status === 401) { logout(); }
     }
 
-    async function downloadPdf(id, name) {
-        const res = await fetch(`/api/llc/${id}/pdf`, {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }
-        });
-        
-        if (res.status === 403) { logout(); return; }
-        
+    async function downloadPdf(id, name, isAdmin = false) {
+        const url = isAdmin ? `/api/admin/llcs/${id}/pdf` : `/api/llc/${id}/pdf`;
+        const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.status === 401) { logout(); return; }
         if (res.ok) {
             const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = name.replace(/ /g, '_') + '_OA.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
+            const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: name.replace(/ /g, '_') + '_OA.pdf' });
+            document.body.appendChild(a); a.click(); a.remove();
         }
     }
 
-    async function loadData() {
-        const res = await fetch('/api/llc/all', {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }
-        });
+    function openEditModal(id, currentStatus, currentEin) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editStatus').value = currentStatus;
+        document.getElementById('editEin').value = currentEin || '';
+        openModal('editModal');
+    }
 
-        if (res.status === 403) { logout(); return; }
+    async function submitUpdate() {
+        const id = document.getElementById('editId').value;
+        const payload = { status: document.getElementById('editStatus').value, ein: document.getElementById('editEin').value };
+        const res = await fetch(`/api/admin/llcs/${id}/status`, { method: 'PATCH', headers: authHeader(), body: JSON.stringify(payload) });
+        if (res.ok) { closeModal('editModal'); loadAdminData(); }
+        else if (res.status === 401) { logout(); }
+    }
 
+    function statusBadge(s) {
+        const map = { PENDING: ['badge-pending', 'Pendiente'], ACTIVE: ['badge-active', 'Activo'], COMPLETED: ['badge-completed', 'Completado'] };
+        const [cls, label] = map[s] || ['badge-pending', s];
+        return `<span class="badge ${cls}">${label}</span>`;
+    }
+
+    async function loadUserData() {
+        const res = await fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.status === 401) { logout(); return; }
         const data = await res.json();
-        const tbody = document.getElementById('tableBody');
 
-        if (data.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay entidades registradas en tu portafolio.</td></tr>'; 
-            return; 
+        const total = data.length;
+        const active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length;
+        const needs5472 = data.filter(l => l.requiresForm5472).length;
+
+        document.getElementById('userStats').innerHTML = `
+            <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
+            <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
+            <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">En proceso</div><div class="stat-value">${pending}</div><div class="stat-meta">Pendientes de activar</div></div>
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>
+        `;
+
+        const tbody = document.getElementById('userTableBody');
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>';
+            return;
         }
-
-        tbody.innerHTML = data.map(llc => `
+        tbody.innerHTML = data.map(l => `
             <tr>
-                <td><strong>${llc.businessName}</strong></td>
-                <td>${llc.ownerName}<span class="td-sub">${llc.ownerEmail}</span></td>
-                <td>${llc.stateOfFormation}</td>
-                <td>${llc.requiresForm5472 ? '<span class="badge-5472">Form 5472</span>' : '<span class="badge-ok">Exento 5472</span>'}</td>
-                <td><span class="badge-pending">${llc.status}</span></td>
-                <td><button class="btn-pdf" onclick="downloadPdf(${llc.id}, '${llc.businessName}')">Descargar OA</button></td>
+                <td><div class="cell-name">${l.businessName}</div></td>
+                <td><div>${l.ownerName}</div><div class="cell-sub">${l.ownerEmail}</div></td>
+                <td>${l.stateOfFormation}</td>
+                <td><div class="cell-sub">${l.annualReportDueDate}</div></td>
+                <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
+                <td>${statusBadge(l.status)}</td>
+                <td><span style="font-family:monospace;font-size:13px;color:${l.ein ? 'var(--text)' : 'var(--subtext)'}">${l.ein || '—'}</span></td>
+                <td><button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    OA
+                </button></td>
+            </tr>
+        `).join('');
+    }
+
+    async function loadAdminData() {
+        const res = await fetch('/api/admin/llcs', { headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.status === 401) { logout(); return; }
+        const data = await res.json();
+
+        const total = data.length;
+        const active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length;
+        const withEin = data.filter(l => l.ein).length;
+
+        document.getElementById('adminStats').innerHTML = `
+            <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
+            <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
+            <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Pendientes</div><div class="stat-value">${pending}</div><div class="stat-meta">Requieren gestión</div></div>
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>
+        `;
+
+        const tbody = document.getElementById('adminTableBody');
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.map(l => `
+            <tr>
+                <td><div class="cell-name">${l.businessName}</div></td>
+                <td><div>${l.ownerName}</div><div class="cell-sub">${l.ownerEmail}</div></td>
+                <td><span style="font-family:monospace;font-size:12px;">${l.ownerRut}</span></td>
+                <td>${l.stateOfFormation}</td>
+                <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
+                <td>${statusBadge(l.status)}</td>
+                <td><span style="font-family:monospace;font-size:13px;color:${l.ein ? 'var(--text)' : 'var(--subtext)'}">${l.ein || '—'}</span></td>
+                <td style="display:flex;gap:8px;">
+                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Editar
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
+                </td>
             </tr>
         `).join('');
     }

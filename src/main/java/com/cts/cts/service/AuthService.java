@@ -31,21 +31,18 @@ public class AuthService {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("El correo ya está registrado");
         }
-
         UserEntity user = new UserEntity();
         user.setName(request.name());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.USER);
         userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        return new AuthResponseDto(jwtToken);
+        return new AuthResponseDto(jwtService.generateToken(user), user.getRole().name());
     }
 
     public AuthResponseDto login(AuthRequestDto request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         UserEntity user = userRepository.findByEmail(request.email()).orElseThrow();
-        String jwtToken = jwtService.generateToken(user);
-        return new AuthResponseDto(jwtToken);
+        return new AuthResponseDto(jwtService.generateToken(user), user.getRole().name());
     }
 }

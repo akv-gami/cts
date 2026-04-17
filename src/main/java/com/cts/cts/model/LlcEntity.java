@@ -25,7 +25,10 @@ public class LlcEntity {
     private String ownerRut;
     private String ownerEmail;
     private String ein;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private LlcStatus status;
+
     private LocalDate creationDate;
     private LocalDate annualReportDueDate;
     private boolean requiresForm5472;

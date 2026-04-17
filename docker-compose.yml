@@ -6,16 +6,20 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    restart: unless-stopped
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cts_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      - JWT_EXPIRATION=86400000
 
   db:
     image: postgres:15-alpine
     ports:
       - "5432:5432"
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=cts_db
       - POSTGRES_USER=postgres
