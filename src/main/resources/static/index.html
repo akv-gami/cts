@@ -284,11 +284,23 @@
     }
 
     async function handleAuth() {
-        const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
-        const payload = { email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value };
-        if (!isLoginMode) payload.name = document.getElementById('authName').value;
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        const errEl = document.getElementById('authError');
+    const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+    const payload = {
+        email: document.getElementById('authEmail').value,
+        password: document.getElementById('authPassword').value
+    };
+    if (!isLoginMode) payload.name = document.getElementById('authName').value;
+
+    const errEl = document.getElementById('authError');
+    errEl.style.display = 'none';
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
         if (res.ok) {
             const data = await res.json();
             localStorage.setItem('jwtToken', data.token);
@@ -296,10 +308,27 @@
             checkAuth();
         } else {
             const body = await res.json().catch(() => ({}));
-            errEl.innerText = body.error || 'Error al autenticar';
+            if (isLoginMode) {
+                errEl.innerText = res.status === 401 || res.status === 403
+                    ? 'Correo o contraseña incorrectos'
+                    : (body.error || 'Error al iniciar sesión');
+            } else {
+                if (body.error) {
+                    errEl.innerText = body.error;
+                } else if (body.fields) {
+                    const firstField = Object.values(body.fields)[0];
+                    errEl.innerText = firstField || 'Revisa los datos ingresados';
+                } else {
+                    errEl.innerText = 'Error al crear la cuenta';
+                }
+            }
             errEl.style.display = 'block';
         }
+    } catch (e) {
+        errEl.innerText = 'Error de conexión. Intenta nuevamente.';
+        errEl.style.display = 'block';
     }
+}
 
     function logout() {
         localStorage.removeItem('jwtToken');
