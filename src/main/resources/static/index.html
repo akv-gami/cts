@@ -1,3 +1,8 @@
+Aquí tienes el archivo index.html completo con las dos últimas correcciones aplicadas (la de la capitalización correcta de "Región Metropolitana" y el mensaje dinámico para correos ya registrados) y totalmente libre de comentarios:
+
+src/main/resources/static/index.html
+
+HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -106,12 +111,25 @@
             body: JSON.stringify(payload)
         });
 
+        const errEl = document.getElementById('authError');
+
         if (res.ok) {
             const data = await res.json();
             localStorage.setItem('jwtToken', data.token);
             checkAuth();
         } else {
-            document.getElementById('authError').style.display = 'block';
+            if (!isLoginMode && res.status === 400) {
+                const errorText = await res.text();
+                try {
+                    JSON.parse(errorText);
+                    errEl.innerText = "Error en los datos ingresados";
+                } catch(e) {
+                    errEl.innerText = errorText; 
+                }
+            } else {
+                errEl.innerText = 'Credenciales incorrectas';
+            }
+            errEl.style.display = 'block';
         }
     }
 
@@ -132,7 +150,9 @@
         }
     }
 
-    function formatState(el) { el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
+    function formatState(el) {
+        el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase());
+    }
 
     function formatRUT(el) {
         let value = el.value.replace(/[^0-9kK]/g, '');

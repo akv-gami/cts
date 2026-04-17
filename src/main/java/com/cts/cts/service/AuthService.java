@@ -28,6 +28,10 @@ public class AuthService {
     }
 
     public AuthResponseDto register(RegisterRequestDto request) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new IllegalArgumentException("El correo ya está registrado");
+        }
+
         UserEntity user = new UserEntity();
         user.setName(request.name());
         user.setEmail(request.email());
