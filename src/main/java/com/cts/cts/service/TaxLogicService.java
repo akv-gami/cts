@@ -11,6 +11,7 @@ import com.cts.cts.model.UserEntity;
 import com.cts.cts.repository.LlcRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class TaxLogicService {
         return user.getId();
     }
 
+    @Transactional
     public LlcResponseDto processNewLlc(LlcRequestDto request) {
         String normalizedState = capitalizeWords(request.stateOfFormation());
         LlcEntity entity = new LlcEntity();
@@ -45,16 +47,19 @@ public class TaxLogicService {
         return toResponse(llcRepository.save(entity));
     }
 
+    @Transactional(readOnly = true)
     public List<LlcResponseDto> getAllLlcs() {
         return llcRepository.findByUserId(getCurrentUserId()).stream()
                 .map(this::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<LlcResponseDto> getAllLlcsAdmin() {
         return llcRepository.findAll().stream()
                 .map(this::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
     public LlcResponseDto getLlcById(Long id) {
         LlcEntity entity = llcRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
@@ -64,11 +69,13 @@ public class TaxLogicService {
         return toResponse(entity);
     }
 
+    @Transactional(readOnly = true)
     public LlcResponseDto getLlcByIdAdmin(Long id) {
         return toResponse(llcRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("LLC no encontrada")));
     }
 
+    @Transactional
     public LlcResponseDto updateLlcStatus(Long id, UpdateLlcStatusDto dto) {
         LlcEntity entity = llcRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
@@ -81,6 +88,23 @@ public class TaxLogicService {
             entity.setEin(dto.ein().trim());
         }
         return toResponse(llcRepository.save(entity));
+    }
+
+    @Transactional
+    public void deleteLlc(Long id) {
+        LlcEntity entity = llcRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
+        if (!entity.getUserId().equals(getCurrentUserId())) {
+            throw new AccessDeniedException("No tienes permiso para eliminar este recurso");
+        }
+        llcRepository.delete(entity);
+    }
+
+    @Transactional
+    public void deleteLlcAdmin(Long id) {
+        LlcEntity entity = llcRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
+        llcRepository.delete(entity);
     }
 
     private String capitalizeWords(String text) {
@@ -99,10 +123,10 @@ public class TaxLogicService {
     private LocalDate calculateAnnualReportDueDate(String normalizedState) {
         int year = LocalDate.now().getYear();
         return switch (normalizedState.toLowerCase()) {
-            case "wyoming" -> LocalDate.of(year + 1, 1, 1);
+            case "wyoming"  -> LocalDate.of(year + 1, 1, 1);
             case "delaware" -> LocalDate.of(year + 1, 3, 1);
-            case "florida" -> LocalDate.of(year + 1, 5, 1);
-            default -> LocalDate.of(year + 1, 4, 15);
+            case "florida"  -> LocalDate.of(year + 1, 5, 1);
+            default         -> LocalDate.of(year + 1, 4, 15);
         };
     }
 

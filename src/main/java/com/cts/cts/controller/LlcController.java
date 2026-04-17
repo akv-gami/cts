@@ -34,15 +34,20 @@ public class LlcController {
         return ResponseEntity.ok(taxLogicService.getAllLlcs());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLlc(@PathVariable Long id) {
+        taxLogicService.deleteLlc(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
         LlcResponseDto llc = taxLogicService.getLlcById(id);
         byte[] pdfBytes = pdfService.generateOperatingAgreement(llc);
-        
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", llc.businessName().replace(" ", "_") + "_Operating_Agreement.pdf");
-        
+        headers.setContentDispositionFormData("attachment",
+                llc.businessName().replace(" ", "_") + "_Operating_Agreement.pdf");
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

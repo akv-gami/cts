@@ -21,18 +21,17 @@ public class PdfService {
     private static final Color COLOR_SUBTEXT   = new Color(100, 116, 139);
     private static final Color COLOR_SUCCESS   = new Color(34, 197, 94);
     private static final Color COLOR_WARNING   = new Color(245, 158, 11);
-    private static final Color COLOR_WHITE     = Color.WHITE;
 
-    private static final Font FONT_TITLE           = new Font(Font.HELVETICA, 22, Font.BOLD, COLOR_WHITE);
+    private static final Font FONT_TITLE           = new Font(Font.HELVETICA, 22, Font.BOLD,   new Color(255, 255, 255));
     private static final Font FONT_SUBTITLE        = new Font(Font.HELVETICA, 11, Font.NORMAL, new Color(199, 210, 254));
-    private static final Font FONT_SECTION         = new Font(Font.HELVETICA, 11, Font.BOLD, COLOR_ACCENT);
+    private static final Font FONT_SECTION         = new Font(Font.HELVETICA, 11, Font.BOLD,   COLOR_ACCENT);
     private static final Font FONT_BODY            = new Font(Font.HELVETICA, 10, Font.NORMAL, COLOR_DARK);
-    private static final Font FONT_BODY_BOLD       = new Font(Font.HELVETICA, 10, Font.BOLD, COLOR_DARK);
-    private static final Font FONT_SMALL           = new Font(Font.HELVETICA, 9, Font.NORMAL, COLOR_SUBTEXT);
-    private static final Font FONT_TABLE_HEAD      = new Font(Font.HELVETICA, 9, Font.BOLD, COLOR_WHITE);
-    private static final Font FONT_TABLE_CELL      = new Font(Font.HELVETICA, 9, Font.NORMAL, COLOR_DARK);
-    private static final Font FONT_TABLE_CELL_BOLD = new Font(Font.HELVETICA, 9, Font.BOLD, COLOR_DARK);
-    private static final Font FONT_LABEL           = new Font(Font.HELVETICA, 8, Font.BOLD, COLOR_SUBTEXT);
+    private static final Font FONT_BODY_BOLD       = new Font(Font.HELVETICA, 10, Font.BOLD,   COLOR_DARK);
+    private static final Font FONT_SMALL           = new Font(Font.HELVETICA,  9, Font.NORMAL, COLOR_SUBTEXT);
+    private static final Font FONT_TABLE_HEAD      = new Font(Font.HELVETICA,  9, Font.BOLD,   new Color(255, 255, 255));
+    private static final Font FONT_TABLE_CELL      = new Font(Font.HELVETICA,  9, Font.NORMAL, COLOR_DARK);
+    private static final Font FONT_TABLE_CELL_BOLD = new Font(Font.HELVETICA,  9, Font.BOLD,   COLOR_DARK);
+    private static final Font FONT_LABEL           = new Font(Font.HELVETICA,  8, Font.BOLD,   COLOR_SUBTEXT);
     private static final Font FONT_VALUE           = new Font(Font.HELVETICA, 10, Font.NORMAL, COLOR_DARK);
 
     private static final DateTimeFormatter DATE_FORMAT =
@@ -95,7 +94,9 @@ public class PdfService {
             addLegalSection(document, "7. ANNUAL REPORTING",
                 "The Company shall comply with all annual reporting requirements of the State of " +
                 llc.stateOfFormation() + ". The Annual Report for the current period is due on or " +
-                "before " + (llc.annualReportDueDate() != null ? llc.annualReportDueDate().format(DATE_FORMAT) : "the applicable statutory deadline") +
+                "before " + (llc.annualReportDueDate() != null
+                        ? llc.annualReportDueDate().format(DATE_FORMAT)
+                        : "the applicable statutory deadline") +
                 ". Failure to timely file the Annual Report may result in administrative dissolution " +
                 "of the Company by the Secretary of State.");
             document.add(Chunk.NEWLINE);
@@ -164,9 +165,10 @@ public class PdfService {
         addInfoCell(table, "RUT (CHILE)", llc.ownerRut());
         addInfoCell(table, "CORREO ELECTRÓNICO", llc.ownerEmail());
 
-        String einValue = (llc.ein() != null && !llc.ein().isBlank()) ? llc.ein() : "Pendiente de asignación";
-        addInfoCell(table, "EIN (EMPLOYER ID)", einValue);
-        addInfoCell(table, "ESTADO DE TRÁMITE", llc.status() != null ? llc.status() : "—");
+        addInfoCell(table, "EIN (EMPLOYER ID)",
+                (llc.ein() != null && !llc.ein().isBlank()) ? llc.ein() : "Pendiente de asignación");
+        addInfoCell(table, "ESTADO DE TRÁMITE",
+                llc.status() != null ? llc.status() : "—");
         addInfoCell(table, "ANNUAL REPORT VENCE",
                 llc.annualReportDueDate() != null ? llc.annualReportDueDate().format(DATE_FORMAT) : "—");
 
@@ -184,9 +186,7 @@ public class PdfService {
         labelP.setSpacingAfter(3);
         cell.addElement(labelP);
 
-        Paragraph valueP = new Paragraph(value != null ? value : "—", FONT_VALUE);
-        cell.addElement(valueP);
-
+        cell.addElement(new Paragraph(value != null ? value : "—", FONT_VALUE));
         table.addCell(cell);
     }
 
@@ -201,8 +201,8 @@ public class PdfService {
         table.setWidths(new float[]{1.2f, 1f, 1f});
 
         PdfPCell hObligation = new PdfPCell(new Phrase("OBLIGACIÓN", FONT_TABLE_HEAD));
-        PdfPCell hStatus     = new PdfPCell(new Phrase("ESTADO", FONT_TABLE_HEAD));
-        PdfPCell hDetail     = new PdfPCell(new Phrase("DETALLE", FONT_TABLE_HEAD));
+        PdfPCell hStatus     = new PdfPCell(new Phrase("ESTADO",     FONT_TABLE_HEAD));
+        PdfPCell hDetail     = new PdfPCell(new Phrase("DETALLE",    FONT_TABLE_HEAD));
 
         for (PdfPCell h : new PdfPCell[]{hObligation, hStatus, hDetail}) {
             h.setBackgroundColor(COLOR_DARK);
@@ -251,10 +251,8 @@ public class PdfService {
         cStatus.setPadding(9);
         cStatus.setBorderColor(COLOR_BORDER);
         cStatus.setBorderWidth(0.5f);
-
         Color badgeColor = isAlert == null ? COLOR_ACCENT : (isAlert ? COLOR_WARNING : COLOR_SUCCESS);
-        Paragraph badgeP = new Paragraph(status, new Font(Font.HELVETICA, 8, Font.BOLD, badgeColor));
-        cStatus.addElement(badgeP);
+        cStatus.addElement(new Paragraph(status, new Font(Font.HELVETICA, 8, Font.BOLD, badgeColor)));
         table.addCell(cStatus);
 
         PdfPCell cDetail = new PdfPCell(new Phrase(detail, FONT_TABLE_CELL));
@@ -275,8 +273,7 @@ public class PdfService {
         bodyP.setAlignment(Element.ALIGN_JUSTIFIED);
         document.add(bodyP);
 
-        LineSeparator line = new LineSeparator(0.3f, 100, COLOR_BORDER, Element.ALIGN_CENTER, -5);
-        document.add(new Chunk(line));
+        document.add(new Chunk(new LineSeparator(0.3f, 100, COLOR_BORDER, Element.ALIGN_CENTER, -5)));
     }
 
     private void addSignatureBlock(Document document, LlcResponseDto llc) throws DocumentException {
@@ -298,17 +295,16 @@ public class PdfService {
         sigTable.setWidthPercentage(100);
         sigTable.setWidths(new float[]{1f, 1f});
 
+        LineSeparator sigLine = new LineSeparator(0.5f, 100, COLOR_DARK, Element.ALIGN_LEFT, 0);
+
         PdfPCell leftCell = new PdfPCell();
         leftCell.setBorder(Rectangle.NO_BORDER);
         leftCell.setPaddingRight(20);
-
-        LineSeparator sigLine = new LineSeparator(0.5f, 100, COLOR_DARK, Element.ALIGN_LEFT, 0);
         leftCell.addElement(new Chunk(sigLine));
 
         Paragraph sigName = new Paragraph(llc.ownerName(), FONT_BODY_BOLD);
         sigName.setSpacingBefore(6);
         leftCell.addElement(sigName);
-
         leftCell.addElement(new Paragraph("Sole Member", FONT_SMALL));
         leftCell.addElement(new Paragraph("RUT: " + llc.ownerRut(), FONT_SMALL));
         leftCell.addElement(new Paragraph(llc.ownerEmail(), FONT_SMALL));
@@ -316,16 +312,13 @@ public class PdfService {
         PdfPCell rightCell = new PdfPCell();
         rightCell.setBorder(Rectangle.NO_BORDER);
         rightCell.setPaddingLeft(20);
-
         rightCell.addElement(new Chunk(sigLine));
 
         Paragraph dateLabel = new Paragraph("Fecha", FONT_BODY_BOLD);
         dateLabel.setSpacingBefore(6);
         rightCell.addElement(dateLabel);
-
         rightCell.addElement(new Paragraph(
-                llc.creationDate() != null ? llc.creationDate().format(DATE_FORMAT) : "—",
-                FONT_SMALL));
+                llc.creationDate() != null ? llc.creationDate().format(DATE_FORMAT) : "—", FONT_SMALL));
         rightCell.addElement(new Paragraph("State of " + llc.stateOfFormation(), FONT_SMALL));
 
         sigTable.addCell(leftCell);
@@ -358,12 +351,9 @@ public class PdfService {
                 cb.setColorFill(COLOR_SUBTEXT);
                 cb.setFontAndSize(baseFont, 8);
 
-                String footerLeft  = companyName + " — Operating Agreement";
-                String footerRight = "Página " + pageNumber;
-
                 cb.beginText();
-                cb.showTextAligned(PdfContentByte.ALIGN_LEFT,  footerLeft,  50,              30, 0);
-                cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, footerRight, pageWidth - 50,  30, 0);
+                cb.showTextAligned(PdfContentByte.ALIGN_LEFT,  companyName + " — Operating Agreement", 50, 30, 0);
+                cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Página " + pageNumber, pageWidth - 50, 30, 0);
                 cb.endText();
 
                 cb.setLineWidth(0.3f);

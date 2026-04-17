@@ -1,5 +1,6 @@
 package com.cts.cts.dto;
 
+import com.cts.cts.validation.ValidRut;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -8,6 +9,7 @@ public record LlcRequestDto(
     String businessName,
 
     @NotBlank(message = "El RUT es obligatorio")
+    @ValidRut
     String ownerRut,
 
     @NotBlank(message = "El nombre del titular es obligatorio")

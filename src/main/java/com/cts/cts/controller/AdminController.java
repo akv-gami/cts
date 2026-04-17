@@ -32,8 +32,16 @@ public class AdminController {
     }
 
     @PatchMapping("/llcs/{id}/status")
-    public ResponseEntity<LlcResponseDto> updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateLlcStatusDto dto) {
+    public ResponseEntity<LlcResponseDto> updateStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateLlcStatusDto dto) {
         return ResponseEntity.ok(taxLogicService.updateLlcStatus(id, dto));
+    }
+
+    @DeleteMapping("/llcs/{id}")
+    public ResponseEntity<Void> deleteLlc(@PathVariable Long id) {
+        taxLogicService.deleteLlcAdmin(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/llcs/{id}/pdf")
@@ -42,7 +50,8 @@ public class AdminController {
         byte[] pdfBytes = pdfService.generateOperatingAgreement(llc);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", llc.businessName().replace(" ", "_") + "_OA.pdf");
+        headers.setContentDispositionFormData("attachment",
+                llc.businessName().replace(" ", "_") + "_OA.pdf");
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

@@ -41,16 +41,21 @@
         .auth-error { background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
         .field { margin-bottom: 16px; }
         .field label { display: block; font-size: 13px; font-weight: 500; color: var(--subtext); margin-bottom: 6px; }
-        .field input { width: 100%; padding: 11px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
+        .field input[type="text"], .field input[type="email"], .field input[type="password"] { width: 100%; padding: 11px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
         .field input::placeholder { color: #4a4f6a; }
         .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
         .field input.err { border-color: var(--danger); }
         .field .field-error { font-size: 12px; color: #fca5a5; margin-top: 5px; display: none; }
+        .checkbox-field { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .checkbox-field input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+        .checkbox-field label { font-size: 13px; font-weight: 500; color: var(--subtext); cursor: pointer; margin: 0; }
         .btn { padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
         .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; }
         .btn-primary:hover { background: var(--accent-hover); }
         .btn-ghost { background: transparent; color: var(--subtext); border: 1px solid var(--border-2); }
         .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
+        .btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+        .btn-danger:hover { background: var(--danger-bg); }
         .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
         .btn-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
         .btn-success:hover { background: rgba(34,197,94,0.2); }
@@ -233,7 +238,11 @@
                 <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
                 <div class="field-error" id="rutError">El RUT ingresado no es válido</div>
             </div>
-            <button class="btn btn-primary" style="margin-top:8px;" onclick="submitLlc()">Completar registro</button>
+            <div class="checkbox-field">
+                <input type="checkbox" id="physicalPresence">
+                <label for="physicalPresence">Tengo presencia física en EE.UU.</label>
+            </div>
+            <button class="btn btn-primary" onclick="submitLlc()">Completar registro</button>
         </div>
     </div>
 </div>
@@ -355,18 +364,28 @@
 
     async function submitLlc() {
         const rutEl = document.getElementById('rut');
-        if (!validateRUT(rutEl.value)) { rutEl.classList.add('err'); document.getElementById('rutError').style.display = 'block'; return; }
+        if (!validateRUT(rutEl.value)) {
+            rutEl.classList.add('err');
+            document.getElementById('rutError').style.display = 'block';
+            return;
+        }
         const payload = {
             businessName: document.getElementById('bizName').value,
             ownerRut: rutEl.value,
             ownerName: document.getElementById('ownerName').value,
             ownerEmail: document.getElementById('ownerEmail').value,
             stateOfFormation: document.getElementById('state').value,
-            hasPhysicalPresenceInUs: false
+            hasPhysicalPresenceInUs: document.getElementById('physicalPresence').checked
         };
         const res = await fetch('/api/llc/onboarding', { method: 'POST', headers: authHeader(), body: JSON.stringify(payload) });
-        if (res.ok) { document.querySelectorAll('#llcModal input').forEach(i => i.value = ''); closeModal('llcModal'); loadUserData(); }
-        else if (res.status === 401) { logout(); }
+        if (res.ok) {
+            document.querySelectorAll('#llcModal input[type="text"], #llcModal input[type="email"]').forEach(i => i.value = '');
+            document.getElementById('physicalPresence').checked = false;
+            closeModal('llcModal');
+            loadUserData();
+        } else if (res.status === 401) {
+            logout();
+        }
     }
 
     async function downloadPdf(id, name, isAdmin = false) {
@@ -375,9 +394,26 @@
         if (res.status === 401) { logout(); return; }
         if (res.ok) {
             const blob = await res.blob();
-            const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: name.replace(/ /g, '_') + '_OA.pdf' });
+            const a = Object.assign(document.createElement('a'), {
+                href: window.URL.createObjectURL(blob),
+                download: name.replace(/ /g, '_') + '_OA.pdf'
+            });
             document.body.appendChild(a); a.click(); a.remove();
         }
+    }
+
+    async function deleteLlc(id) {
+        if (!confirm('¿Eliminar esta LLC? Esta acción no se puede deshacer.')) return;
+        const res = await fetch(`/api/llc/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.ok) loadUserData();
+        else if (res.status === 401) logout();
+    }
+
+    async function deleteLlcAdmin(id) {
+        if (!confirm('¿Eliminar esta LLC? Esta acción no se puede deshacer.')) return;
+        const res = await fetch(`/api/admin/llcs/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.ok) loadAdminData();
+        else if (res.status === 401) logout();
     }
 
     function openEditModal(id, currentStatus, currentEin) {
@@ -392,7 +428,7 @@
         const payload = { status: document.getElementById('editStatus').value, ein: document.getElementById('editEin').value };
         const res = await fetch(`/api/admin/llcs/${id}/status`, { method: 'PATCH', headers: authHeader(), body: JSON.stringify(payload) });
         if (res.ok) { closeModal('editModal'); loadAdminData(); }
-        else if (res.status === 401) { logout(); }
+        else if (res.status === 401) logout();
     }
 
     function statusBadge(s) {
@@ -405,20 +441,32 @@
         return `<span style="font-family:monospace;font-size:13px;color:${ein ? 'var(--text)' : 'var(--subtext)'}">${ein || '—'}</span>`;
     }
 
+    const deleteIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
+    const editIcon  = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
+    const downloadIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`;
+
     async function loadUserData() {
         const res = await fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length, needs5472 = data.filter(l => l.requiresForm5472).length;
+
+        const total = data.length;
+        const active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length;
+        const needs5472 = data.filter(l => l.requiresForm5472).length;
+
         document.getElementById('userStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">En proceso</div><div class="stat-value">${pending}</div><div class="stat-meta">Pendientes de activar</div></div>
             <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>
         `;
+
         const tbody = document.getElementById('userTableBody');
-        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>'; return; }
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>';
+            return;
+        }
         tbody.innerHTML = data.map(l => `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
@@ -428,7 +476,10 @@
                 <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
                 <td>${statusBadge(l.status)}</td>
                 <td>${einCell(l.ein)}</td>
-                <td><div class="td-actions"><button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>OA</button></div></td>
+                <td><div class="td-actions">
+                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')">${downloadIcon} OA</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteLlc(${l.id})">${deleteIcon}</button>
+                </div></td>
             </tr>
         `).join('');
     }
@@ -437,16 +488,24 @@
         const res = await fetch('/api/admin/llcs', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length, withEin = data.filter(l => l.ein).length;
+
+        const total = data.length;
+        const active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length;
+        const withEin = data.filter(l => l.ein).length;
+
         document.getElementById('adminStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Pendientes</div><div class="stat-value">${pending}</div><div class="stat-meta">Requieren gestión</div></div>
             <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>
         `;
+
         const tbody = document.getElementById('adminTableBody');
-        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>'; return; }
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>';
+            return;
+        }
         tbody.innerHTML = data.map(l => `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
@@ -457,8 +516,9 @@
                 <td>${statusBadge(l.status)}</td>
                 <td>${einCell(l.ein)}</td>
                 <td><div class="td-actions">
-                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Editar</button>
+                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')">${editIcon} Editar</button>
                     <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteLlcAdmin(${l.id})">${deleteIcon}</button>
                 </div></td>
             </tr>
         `).join('');
