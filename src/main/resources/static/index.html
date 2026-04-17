@@ -1,87 +1,140 @@
-Aquí tienes el archivo index.html completo con las dos últimas correcciones aplicadas (la de la capitalización correcta de "Región Metropolitana" y el mensaje dinámico para correos ya registrados) y totalmente libre de comentarios:
-
-src/main/resources/static/index.html
-
-HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTS Consulting</title>
+    <title>CTS Consulting - Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1e293b; --accent: #3b82f6; --bg: #f1f5f9; --surface: #ffffff; --error: #ef4444; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--primary); padding: 40px; display: flex; justify-content: center; margin: 0; }
-        .card { background: var(--surface); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 360px; }
-        .dashboard-container { display: flex; gap: 30px; width: 100%; max-width: 1300px; }
-        .dashboard { flex-grow: 1; }
-        h2 { margin-top: 0; font-size: 1.4rem; }
-        label { font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px; }
-        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 11px 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+        :root { --primary: #111827; --subtext: #6b7280; --accent: #2563eb; --accent-hover: #1d4ed8; --bg: #f9fafb; --surface: #ffffff; --border: #e5e7eb; --error: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: var(--bg); color: var(--primary); -webkit-font-smoothing: antialiased; }
+        
+        .navbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+        
+        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card { background: var(--surface); padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); width: 100%; max-width: 400px; border: 1px solid var(--border); }
+        .card h2 { font-size: 24px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.5px; text-align: center; }
+        
+        .main-container { max-width: 1200px; margin: 40px auto; padding: 0 32px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+        .page-header p { color: var(--subtext); font-size: 14px; margin-top: 4px; }
+        
+        label { font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px; }
+        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 10px 14px; margin-bottom: 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
         .input-error { border-color: var(--error) !important; }
-        .error-text { color: var(--error); font-size: 12px; margin-top: -12px; margin-bottom: 12px; display: none; }
-        button { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        button:hover { background: #2563eb; }
-        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-top: 10px; }
-        .btn-logout { background: #ef4444; width: auto; padding: 8px 16px; float: right; }
-        .btn-pdf { background: #10b981; padding: 6px 12px; font-size: 12px; border-radius: 4px; width: auto; }
-        .btn-pdf:hover { background: #059669; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
-        th { background: #f8fafc; padding: 12px 15px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
-        td { padding: 14px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-        .badge-pending { background: #fef3c7; color: #92400e; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-        .badge-5472 { background: #fee2e2; color: #b91c1c; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-        .badge-ok { background: #d1fae5; color: #065f46; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-        .empty-state { text-align: center; padding: 40px; color: #94a3b8; }
-        #authView, #dashboardView { display: none; }
+        .error-text { color: var(--error); font-size: 13px; font-weight: 500; margin-top: -12px; margin-bottom: 12px; display: none; text-align: center; }
+        
+        button { background: var(--accent); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); width: 100%; }
+        button:hover { background: var(--accent-hover); }
+        .btn-secondary { background: transparent; color: var(--subtext); border: none; box-shadow: none; margin-top: 8px; font-weight: 500; }
+        .btn-secondary:hover { background: #f3f4f6; color: var(--primary); }
+        .btn-logout { background: transparent; color: var(--subtext); border: 1px solid var(--border); width: auto; font-size: 13px; box-shadow: none; }
+        .btn-logout:hover { background: #f3f4f6; color: var(--primary); }
+        .btn-add { width: auto; display: flex; align-items: center; gap: 8px; }
+        .btn-pdf { background: white; color: #10b981; border: 1px solid #10b981; padding: 6px 12px; font-size: 12px; font-weight: 600; width: auto; box-shadow: none; }
+        .btn-pdf:hover { background: #10b981; color: white; }
+        
+        .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #f8fafc; padding: 14px 24px; font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+        td { padding: 16px 24px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--primary); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f8fafc; }
+        .td-sub { color: var(--subtext); font-size: 13px; display: block; margin-top: 2px; }
+        
+        .badge-pending { background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-5472 { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-ok { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--subtext); font-size: 14px; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; transform: translateY(0); }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 18px; font-weight: 600; }
+        .btn-close { background: transparent; color: var(--subtext); border: none; font-size: 24px; width: auto; padding: 0; line-height: 1; box-shadow: none; }
+        .btn-close:hover { color: var(--primary); background: transparent; }
+        .modal-body { padding: 24px; }
+        
+        #authSection { display: none; }
+        #appSection { display: none; }
     </style>
 </head>
 <body>
 
-<div id="authView" class="card" style="margin: auto;">
-    <h2 id="authTitle">Iniciar Sesión</h2>
-    <div id="authError" class="error-text" style="display: none;">Credenciales incorrectas</div>
-    <input type="text" id="authName" placeholder="Tu Nombre" style="display: none;">
-    <input type="email" id="authEmail" placeholder="correo@ejemplo.com">
-    <input type="password" id="authPassword" placeholder="Contraseña">
-    <button id="authActionBtn" onclick="handleAuth()">Entrar</button>
-    <button class="btn-secondary" onclick="toggleAuthMode()">Crear una cuenta</button>
+<div id="authSection" class="auth-container">
+    <div class="card">
+        <h2 id="authTitle">Iniciar Sesión</h2>
+        <div id="authError" class="error-text"></div>
+        <input type="text" id="authName" placeholder="Nombre completo" style="display: none;">
+        <input type="email" id="authEmail" placeholder="correo@ejemplo.com">
+        <input type="password" id="authPassword" placeholder="Contraseña">
+        <button id="authActionBtn" onclick="handleAuth()">Entrar</button>
+        <button class="btn-secondary" onclick="toggleAuthMode()">Crear una cuenta nueva</button>
+    </div>
 </div>
 
-<div id="dashboardView" class="dashboard-container">
-    <div class="card">
-        <h2>Nueva LLC</h2>
-        <label>Nombre de Empresa</label>
-        <input type="text" id="bizName" placeholder="Ej: TechStore">
-        <label>Estado de Formación</label>
-        <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
-        <label>Nombre del Titular</label>
-        <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
-        <label>Correo del Titular</label>
-        <input type="email" id="ownerEmail" placeholder="juan@email.com">
-        <label>RUT del Titular</label>
-        <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
-        <div id="rutError" class="error-text">RUT no válido</div>
-        <button onclick="submitForm()">Registrar LLC</button>
-    </div>
-
-    <div class="dashboard">
+<div id="appSection">
+    <nav class="navbar">
+        <div class="logo">CTS Consulting</div>
         <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
-        <h2>Mi Portafolio</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Empresa</th>
-                    <th>Titular</th>
-                    <th>Jurisdicción</th>
-                    <th>Form 5472</th>
-                    <th>Estado</th>
-                    <th>Documentos</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+    </nav>
+
+    <main class="main-container">
+        <div class="page-header">
+            <div>
+                <h1>Tracker de Entidades</h1>
+                <p>Gestiona tu portafolio y obligaciones corporativas en EE.UU.</p>
+            </div>
+            <button class="btn-add" onclick="openModal()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Registrar LLC
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Entidad</th>
+                        <th>Titular</th>
+                        <th>Jurisdicción</th>
+                        <th>Obligaciones</th>
+                        <th>Estado</th>
+                        <th>Documentos</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="llcModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Nueva Entidad</h3>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="llcForm">
+            <label>Nombre de la Empresa</label>
+            <input type="text" id="bizName" placeholder="Ej: TechStore">
+            <label>Estado de Formación</label>
+            <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
+            <label>Nombre del Titular</label>
+            <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
+            <label>Correo del Titular</label>
+            <input type="email" id="ownerEmail" placeholder="juan@email.com">
+            <label>RUT del Titular</label>
+            <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
+            <div id="rutError" class="error-text" style="text-align:left;">El RUT ingresado no es válido</div>
+            <button onclick="submitForm()" style="margin-top: 8px;">Completar Registro</button>
+        </div>
     </div>
 </div>
 
@@ -90,9 +143,9 @@ HTML
 
     function toggleAuthMode() {
         isLoginMode = !isLoginMode;
-        document.getElementById('authTitle').innerText = isLoginMode ? 'Iniciar Sesión' : 'Registro de Cliente';
+        document.getElementById('authTitle').innerText = isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta';
         document.getElementById('authActionBtn').innerText = isLoginMode ? 'Entrar' : 'Registrarse';
-        document.querySelector('.btn-secondary').innerText = isLoginMode ? 'Crear una cuenta' : 'Ya tengo cuenta';
+        document.querySelector('.btn-secondary').innerText = isLoginMode ? 'Crear una cuenta nueva' : 'Ya tengo una cuenta';
         document.getElementById('authName').style.display = isLoginMode ? 'none' : 'block';
         document.getElementById('authError').style.display = 'none';
     }
@@ -122,7 +175,7 @@ HTML
                 const errorText = await res.text();
                 try {
                     JSON.parse(errorText);
-                    errEl.innerText = "Error en los datos ingresados";
+                    errEl.innerText = "Revisa los datos ingresados";
                 } catch(e) {
                     errEl.innerText = errorText; 
                 }
@@ -141,14 +194,17 @@ HTML
     function checkAuth() {
         const token = localStorage.getItem('jwtToken');
         if (token) {
-            document.getElementById('authView').style.display = 'none';
-            document.getElementById('dashboardView').style.display = 'flex';
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
             loadData();
         } else {
-            document.getElementById('authView').style.display = 'block';
-            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('appSection').style.display = 'none';
         }
     }
+
+    function openModal() { document.getElementById('llcModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('llcModal').style.display = 'none'; }
 
     function formatState(el) {
         el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase());
@@ -199,7 +255,8 @@ HTML
         });
 
         if (res.ok) {
-            document.querySelectorAll('#dashboardView input').forEach(i => i.value = '');
+            document.querySelectorAll('#llcForm input').forEach(i => i.value = '');
+            closeModal();
             loadData();
         } else if (res.status === 403) {
             logout();
@@ -236,14 +293,17 @@ HTML
         const data = await res.json();
         const tbody = document.getElementById('tableBody');
 
-        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay LLCs registradas</td></tr>'; return; }
+        if (data.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay entidades registradas en tu portafolio.</td></tr>'; 
+            return; 
+        }
 
         tbody.innerHTML = data.map(llc => `
             <tr>
                 <td><strong>${llc.businessName}</strong></td>
-                <td>${llc.ownerName}<br><span style="color:#94a3b8;font-size:11px">${llc.ownerEmail}</span></td>
+                <td>${llc.ownerName}<span class="td-sub">${llc.ownerEmail}</span></td>
                 <td>${llc.stateOfFormation}</td>
-                <td>${llc.requiresForm5472 ? '<span class="badge-5472">Requiere 5472</span>' : '<span class="badge-ok">Exento</span>'}</td>
+                <td>${llc.requiresForm5472 ? '<span class="badge-5472">Form 5472</span>' : '<span class="badge-ok">Exento 5472</span>'}</td>
                 <td><span class="badge-pending">${llc.status}</span></td>
                 <td><button class="btn-pdf" onclick="downloadPdf(${llc.id}, '${llc.businessName}')">Descargar OA</button></td>
             </tr>
