@@ -2,6 +2,8 @@ package com.cts.cts.service;
 
 import com.cts.cts.dto.LlcRequestDto;
 import com.cts.cts.dto.LlcResponseDto;
+import com.cts.cts.exception.AccessDeniedException;
+import com.cts.cts.exception.NotFoundException;
 import com.cts.cts.model.LlcEntity;
 import com.cts.cts.model.UserEntity;
 import com.cts.cts.repository.LlcRepository;
@@ -26,20 +28,21 @@ public class TaxLogicService {
 
     public LlcResponseDto processNewLlc(LlcRequestDto request) {
         LlcEntity entity = new LlcEntity();
+        String normalizedState = capitalizeWords(request.stateOfFormation());
+
         entity.setUserId(getCurrentUserId());
         entity.setBusinessName(request.businessName().trim() + " LLC");
         entity.setOwnerName(request.ownerName().trim());
         entity.setOwnerRut(request.ownerRut().trim());
         entity.setOwnerEmail(request.ownerEmail().trim().toLowerCase());
-        entity.setStateOfFormation(capitalizeWords(request.stateOfFormation()));
+        entity.setStateOfFormation(normalizedState);
         entity.setCreationDate(LocalDate.now());
-        entity.setAnnualReportDueDate(calculateAnnualReportDueDate(request.stateOfFormation()));
+        entity.setAnnualReportDueDate(calculateAnnualReportDueDate(normalizedState));
         entity.setStatus("PENDING");
         entity.setRequiresForm5472(!request.hasPhysicalPresenceInUs());
         entity.setEin(null);
 
-        LlcEntity saved = llcRepository.save(entity);
-        return toResponse(saved);
+        return toResponse(llcRepository.save(entity));
     }
 
     public List<LlcResponseDto> getAllLlcs() {
@@ -49,9 +52,10 @@ public class TaxLogicService {
     }
 
     public LlcResponseDto getLlcById(Long id) {
-        LlcEntity entity = llcRepository.findById(id).orElseThrow(() -> new RuntimeException("LLC no encontrada"));
+        LlcEntity entity = llcRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
         if (!entity.getUserId().equals(getCurrentUserId())) {
-            throw new RuntimeException("Acceso denegado");
+            throw new AccessDeniedException("No tienes permiso para acceder a este recurso");
         }
         return toResponse(entity);
     }
@@ -69,13 +73,13 @@ public class TaxLogicService {
         return result.toString().trim();
     }
 
-    private LocalDate calculateAnnualReportDueDate(String state) {
-        int currentYear = LocalDate.now().getYear();
-        return switch (state.trim().toLowerCase()) {
-            case "wyoming" -> LocalDate.of(currentYear + 1, 1, 1);
-            case "delaware" -> LocalDate.of(currentYear + 1, 3, 1);
-            case "florida" -> LocalDate.of(currentYear + 1, 5, 1);
-            default -> LocalDate.of(currentYear + 1, 4, 15);
+    private LocalDate calculateAnnualReportDueDate(String normalizedState) {
+        int year = LocalDate.now().getYear();
+        return switch (normalizedState.toLowerCase()) {
+            case "wyoming" -> LocalDate.of(year + 1, 1, 1);
+            case "delaware" -> LocalDate.of(year + 1, 3, 1);
+            case "florida" -> LocalDate.of(year + 1, 5, 1);
+            default -> LocalDate.of(year + 1, 4, 15);
         };
     }
 
