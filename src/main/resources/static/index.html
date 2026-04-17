@@ -132,7 +132,7 @@
         }
     }
 
-    function formatState(el) { el.value = el.value.replace(/\b\w/g, l => l.toUpperCase()); }
+    function formatState(el) { el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
 
     function formatRUT(el) {
         let value = el.value.replace(/[^0-9kK]/g, '');
