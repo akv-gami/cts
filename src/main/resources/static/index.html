@@ -30,19 +30,15 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
-
-        /* AUTH */
         .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 0%, rgba(79,110,247,0.12) 0%, transparent 70%), var(--bg); }
         .auth-box { width: 100%; max-width: 420px; padding: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; }
-        .auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; justify-content: center; }
+        .auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; justify-content: center; text-decoration: none; }
         .auth-logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .auth-logo-icon svg { width: 20px; height: 20px; color: white; }
-        .auth-logo span { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .auth-logo span { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .auth-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; text-align: center; }
         .auth-box p.auth-sub { text-align: center; color: var(--subtext); font-size: 14px; margin-bottom: 28px; }
         .auth-error { background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
-
-        /* FORM ELEMENTS */
         .field { margin-bottom: 16px; }
         .field label { display: block; font-size: 13px; font-weight: 500; color: var(--subtext); margin-bottom: 6px; }
         .field input { width: 100%; padding: 11px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
@@ -50,8 +46,6 @@
         .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
         .field input.err { border-color: var(--danger); }
         .field .field-error { font-size: 12px; color: #fca5a5; margin-top: 5px; display: none; }
-
-        /* BUTTONS */
         .btn { padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
         .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; }
         .btn-primary:hover { background: var(--accent-hover); }
@@ -62,23 +56,17 @@
         .btn-success:hover { background: rgba(34,197,94,0.2); }
         .btn-link { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 0; margin-top: 12px; display: block; text-align: center; width: 100%; }
         .btn-link:hover { text-decoration: underline; }
-
-        /* NAVBAR */
         .navbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 40; }
-        .nav-logo { display: flex; align-items: center; gap: 9px; }
+        .nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
         .nav-logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .nav-logo-icon svg { width: 16px; height: 16px; color: white; }
-        .nav-logo span { font-size: 16px; font-weight: 700; }
+        .nav-logo span { font-size: 16px; font-weight: 700; color: var(--text); }
         .nav-right { display: flex; align-items: center; gap: 12px; }
         .nav-badge { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(79,110,247,0.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-
-        /* LAYOUT */
         .main { max-width: 1280px; margin: 0 auto; padding: 36px 28px; }
         .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
         .page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
         .page-sub { color: var(--subtext); font-size: 14px; margin-top: 4px; }
-
-        /* STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
         .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
         .stat-label { font-size: 12px; font-weight: 500; color: var(--subtext); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
@@ -90,8 +78,6 @@
         .si-green { background: var(--success-bg); color: var(--success); }
         .si-yellow { background: var(--warning-bg); color: var(--warning); }
         .si-purple { background: var(--purple-bg); color: var(--purple); }
-
-        /* TABLE */
         .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
         .table-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border); }
         .table-title { font-size: 15px; font-weight: 600; }
@@ -104,8 +90,6 @@
         .cell-sub { font-size: 12px; color: var(--subtext); margin-top: 2px; }
         .empty-state { text-align: center; padding: 64px 20px; color: var(--subtext); }
         .empty-icon { font-size: 36px; margin-bottom: 12px; }
-
-        /* BADGES */
         .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
         .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
         .badge-pending { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
@@ -118,8 +102,6 @@
         .badge-5472::before { background: var(--danger); }
         .badge-ok { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
         .badge-ok::before { background: var(--success); }
-
-        /* MODAL */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; }
         .overlay.open { display: flex; }
         .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
@@ -128,18 +110,13 @@
         .btn-x { background: var(--surface-2); border: 1px solid var(--border-2); color: var(--subtext); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0; }
         .btn-x:hover { color: var(--text); }
         .modal-body { padding: 24px; }
-
-        /* ADMIN */
         .admin-banner { background: linear-gradient(135deg, rgba(167,139,250,0.15) 0%, rgba(79,110,247,0.15) 100%); border: 1px solid rgba(167,139,250,0.2); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
         .admin-banner svg { width: 20px; height: 20px; color: var(--purple); flex-shrink: 0; }
         .admin-banner span { font-size: 13px; color: #c4b5fd; }
         .admin-banner strong { color: var(--purple); }
         .select-field { width: 100%; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; cursor: pointer; appearance: none; }
         .select-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-
-        /* TD ACTIONS FIX */
         .td-actions { display: flex; gap: 8px; align-items: center; }
-
         #authSection, #appSection { display: none; }
     </style>
 </head>
@@ -147,12 +124,12 @@
 
 <div id="authSection" class="auth-wrap">
     <div class="auth-box">
-        <div class="auth-logo">
+        <a href="/landing.html" class="auth-logo">
             <div class="auth-logo-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             </div>
             <span>CTS Consulting</span>
-        </div>
+        </a>
         <h2 id="authTitle">Bienvenido de vuelta</h2>
         <p class="auth-sub" id="authSub">Ingresa a tu panel de gestión corporativa</p>
         <div id="authError" class="auth-error"></div>
@@ -175,19 +152,18 @@
 
 <div id="appSection">
     <nav class="navbar">
-        <div class="nav-logo">
+        <a href="/landing.html" class="nav-logo">
             <div class="nav-logo-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             </div>
             <span>CTS Consulting</span>
-        </div>
+        </a>
         <div class="nav-right">
             <span class="nav-badge" id="roleBadge"></span>
             <button class="btn btn-ghost btn-sm" onclick="logout()">Cerrar sesión</button>
         </div>
     </nav>
 
-    <!-- VISTA USUARIO -->
     <main class="main" id="userView" style="display:none;">
         <div class="page-header">
             <div>
@@ -199,24 +175,14 @@
                 Registrar LLC
             </button>
         </div>
-
         <div class="stats-grid" id="userStats"></div>
-
         <div class="table-card">
-            <div class="table-toolbar">
-                <span class="table-title">Portafolio de LLCs</span>
-            </div>
+            <div class="table-toolbar"><span class="table-title">Portafolio de LLCs</span></div>
             <table>
                 <thead>
                     <tr>
-                        <th>Entidad</th>
-                        <th>Titular</th>
-                        <th>Jurisdicción</th>
-                        <th>Annual Report</th>
-                        <th>Form 5472</th>
-                        <th>Estado</th>
-                        <th>EIN</th>
-                        <th>Acciones</th>
+                        <th>Entidad</th><th>Titular</th><th>Jurisdicción</th>
+                        <th>Annual Report</th><th>Form 5472</th><th>Estado</th><th>EIN</th><th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="userTableBody"></tbody>
@@ -224,7 +190,6 @@
         </div>
     </main>
 
-    <!-- VISTA ADMIN -->
     <main class="main" id="adminView" style="display:none;">
         <div class="page-header">
             <div>
@@ -232,29 +197,18 @@
                 <div class="page-sub">Gestión global de todas las entidades registradas</div>
             </div>
         </div>
-
         <div class="admin-banner">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             <span>Estás operando como <strong>Administrador</strong>. Puedes ver y gestionar todas las entidades, actualizar su estado y asignar el EIN.</span>
         </div>
-
         <div class="stats-grid" id="adminStats"></div>
-
         <div class="table-card">
-            <div class="table-toolbar">
-                <span class="table-title">Todas las LLCs</span>
-            </div>
+            <div class="table-toolbar"><span class="table-title">Todas las LLCs</span></div>
             <table>
                 <thead>
                     <tr>
-                        <th>Entidad</th>
-                        <th>Titular</th>
-                        <th>RUT</th>
-                        <th>Jurisdicción</th>
-                        <th>Form 5472</th>
-                        <th>Estado</th>
-                        <th>EIN</th>
-                        <th>Acciones</th>
+                        <th>Entidad</th><th>Titular</th><th>RUT</th><th>Jurisdicción</th>
+                        <th>Form 5472</th><th>Estado</th><th>EIN</th><th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="adminTableBody"></tbody>
@@ -263,7 +217,6 @@
     </main>
 </div>
 
-<!-- Modal Nueva LLC -->
 <div id="llcModal" class="overlay">
     <div class="modal">
         <div class="modal-head">
@@ -271,22 +224,10 @@
             <button class="btn-x" onclick="closeModal('llcModal')">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="field">
-                <label>Nombre de la empresa</label>
-                <input type="text" id="bizName" placeholder="Ej: TechStore (sin LLC)">
-            </div>
-            <div class="field">
-                <label>Estado de formación</label>
-                <input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)">
-            </div>
-            <div class="field">
-                <label>Nombre del titular</label>
-                <input type="text" id="ownerName" placeholder="Ej: Juan Pérez">
-            </div>
-            <div class="field">
-                <label>Correo del titular</label>
-                <input type="email" id="ownerEmail" placeholder="juan@email.com">
-            </div>
+            <div class="field"><label>Nombre de la empresa</label><input type="text" id="bizName" placeholder="Ej: TechStore (sin LLC)"></div>
+            <div class="field"><label>Estado de formación</label><input type="text" id="state" placeholder="Ej: Delaware" oninput="formatState(this)"></div>
+            <div class="field"><label>Nombre del titular</label><input type="text" id="ownerName" placeholder="Ej: Juan Pérez"></div>
+            <div class="field"><label>Correo del titular</label><input type="email" id="ownerEmail" placeholder="juan@email.com"></div>
             <div class="field">
                 <label>RUT del titular</label>
                 <input type="text" id="rut" placeholder="12.345.678-9" oninput="formatRUT(this)">
@@ -297,7 +238,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Estado (Admin) -->
 <div id="editModal" class="overlay">
     <div class="modal">
         <div class="modal-head">
@@ -314,10 +254,7 @@
                     <option value="COMPLETED">Completado</option>
                 </select>
             </div>
-            <div class="field">
-                <label>EIN (Número de identificación fiscal)</label>
-                <input type="text" id="editEin" placeholder="Ej: 12-3456789">
-            </div>
+            <div class="field"><label>EIN (Número de identificación fiscal)</label><input type="text" id="editEin" placeholder="Ej: 12-3456789"></div>
             <button class="btn btn-primary" style="margin-top:8px;" onclick="submitUpdate()">Guardar cambios</button>
         </div>
     </div>
@@ -339,18 +276,9 @@
 
     async function handleAuth() {
         const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
-        const payload = {
-            email: document.getElementById('authEmail').value,
-            password: document.getElementById('authPassword').value
-        };
+        const payload = { email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value };
         if (!isLoginMode) payload.name = document.getElementById('authName').value;
-
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         const errEl = document.getElementById('authError');
         if (res.ok) {
             const data = await res.json();
@@ -394,7 +322,6 @@
 
     function token() { return localStorage.getItem('jwtToken'); }
     function authHeader() { return { 'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json' }; }
-
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
@@ -403,14 +330,11 @@
             el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
         });
     });
-
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(el => el.classList.remove('open'));
     });
 
-    function formatState(el) {
-        el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase());
-    }
+    function formatState(el) { el.value = el.value.replace(/(?:^|\s)\S/g, l => l.toUpperCase()); }
 
     function formatRUT(el) {
         let v = el.value.replace(/[^0-9kK]/g, '');
@@ -431,11 +355,7 @@
 
     async function submitLlc() {
         const rutEl = document.getElementById('rut');
-        if (!validateRUT(rutEl.value)) {
-            rutEl.classList.add('err');
-            document.getElementById('rutError').style.display = 'block';
-            return;
-        }
+        if (!validateRUT(rutEl.value)) { rutEl.classList.add('err'); document.getElementById('rutError').style.display = 'block'; return; }
         const payload = {
             businessName: document.getElementById('bizName').value,
             ownerRut: rutEl.value,
@@ -444,18 +364,9 @@
             stateOfFormation: document.getElementById('state').value,
             hasPhysicalPresenceInUs: false
         };
-        const res = await fetch('/api/llc/onboarding', {
-            method: 'POST',
-            headers: authHeader(),
-            body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-            document.querySelectorAll('#llcModal input').forEach(i => i.value = '');
-            closeModal('llcModal');
-            loadUserData();
-        } else if (res.status === 401) {
-            logout();
-        }
+        const res = await fetch('/api/llc/onboarding', { method: 'POST', headers: authHeader(), body: JSON.stringify(payload) });
+        if (res.ok) { document.querySelectorAll('#llcModal input').forEach(i => i.value = ''); closeModal('llcModal'); loadUserData(); }
+        else if (res.status === 401) { logout(); }
     }
 
     async function downloadPdf(id, name, isAdmin = false) {
@@ -464,13 +375,8 @@
         if (res.status === 401) { logout(); return; }
         if (res.ok) {
             const blob = await res.blob();
-            const a = Object.assign(document.createElement('a'), {
-                href: window.URL.createObjectURL(blob),
-                download: name.replace(/ /g, '_') + '_OA.pdf'
-            });
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: name.replace(/ /g, '_') + '_OA.pdf' });
+            document.body.appendChild(a); a.click(); a.remove();
         }
     }
 
@@ -483,29 +389,14 @@
 
     async function submitUpdate() {
         const id = document.getElementById('editId').value;
-        const payload = {
-            status: document.getElementById('editStatus').value,
-            ein: document.getElementById('editEin').value
-        };
-        const res = await fetch(`/api/admin/llcs/${id}/status`, {
-            method: 'PATCH',
-            headers: authHeader(),
-            body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-            closeModal('editModal');
-            loadAdminData();
-        } else if (res.status === 401) {
-            logout();
-        }
+        const payload = { status: document.getElementById('editStatus').value, ein: document.getElementById('editEin').value };
+        const res = await fetch(`/api/admin/llcs/${id}/status`, { method: 'PATCH', headers: authHeader(), body: JSON.stringify(payload) });
+        if (res.ok) { closeModal('editModal'); loadAdminData(); }
+        else if (res.status === 401) { logout(); }
     }
 
     function statusBadge(s) {
-        const map = {
-            PENDING: ['badge-pending', 'Pendiente'],
-            ACTIVE: ['badge-active', 'Activo'],
-            COMPLETED: ['badge-completed', 'Completado']
-        };
+        const map = { PENDING: ['badge-pending', 'Pendiente'], ACTIVE: ['badge-active', 'Activo'], COMPLETED: ['badge-completed', 'Completado'] };
         const [cls, label] = map[s] || ['badge-pending', s || '—'];
         return `<span class="badge ${cls}">${label}</span>`;
     }
@@ -518,64 +409,26 @@
         const res = await fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-
-        const total = data.length;
-        const active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length;
-        const needs5472 = data.filter(l => l.requiresForm5472).length;
-
+        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length, needs5472 = data.filter(l => l.requiresForm5472).length;
         document.getElementById('userStats').innerHTML = `
-            <div class="stat-card">
-                <div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div>
-                <div class="stat-label">Total LLCs</div>
-                <div class="stat-value">${total}</div>
-                <div class="stat-meta">En tu portafolio</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div class="stat-label">Activas</div>
-                <div class="stat-value">${active}</div>
-                <div class="stat-meta">Completamente operativas</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div class="stat-label">En proceso</div>
-                <div class="stat-value">${pending}</div>
-                <div class="stat-meta">Pendientes de activar</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-                <div class="stat-label">Form 5472</div>
-                <div class="stat-value">${needs5472}</div>
-                <div class="stat-meta">Obligaciones IRS</div>
-            </div>
+            <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
+            <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
+            <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">En proceso</div><div class="stat-value">${pending}</div><div class="stat-meta">Pendientes de activar</div></div>
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>
         `;
-
         const tbody = document.getElementById('userTableBody');
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>';
-            return;
-        }
+        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>'; return; }
         tbody.innerHTML = data.map(l => `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
-                <td>
-                    <div>${l.ownerName || '—'}</div>
-                    <div class="cell-sub">${l.ownerEmail || '—'}</div>
-                </td>
+                <td><div>${l.ownerName || '—'}</div><div class="cell-sub">${l.ownerEmail || '—'}</div></td>
                 <td>${l.stateOfFormation || '—'}</td>
                 <td><div class="cell-sub">${l.annualReportDueDate || '—'}</div></td>
                 <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
                 <td>${statusBadge(l.status)}</td>
                 <td>${einCell(l.ein)}</td>
-                <td>
-                    <div class="td-actions">
-                        <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')">
-                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            OA
-                        </button>
-                    </div>
-                </td>
+                <td><div class="td-actions"><button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>OA</button></div></td>
             </tr>
         `).join('');
     }
@@ -584,65 +437,29 @@
         const res = await fetch('/api/admin/llcs', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-
-        const total = data.length;
-        const active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length;
-        const withEin = data.filter(l => l.ein).length;
-
+        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length, withEin = data.filter(l => l.ein).length;
         document.getElementById('adminStats').innerHTML = `
-            <div class="stat-card">
-                <div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div>
-                <div class="stat-label">Total entidades</div>
-                <div class="stat-value">${total}</div>
-                <div class="stat-meta">En toda la plataforma</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div class="stat-label">Activas</div>
-                <div class="stat-value">${active}</div>
-                <div class="stat-meta">Completamente operativas</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div class="stat-label">Pendientes</div>
-                <div class="stat-value">${pending}</div>
-                <div class="stat-meta">Requieren gestión</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div>
-                <div class="stat-label">Con EIN</div>
-                <div class="stat-value">${withEin}</div>
-                <div class="stat-meta">EIN asignado</div>
-            </div>
+            <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
+            <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
+            <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Pendientes</div><div class="stat-value">${pending}</div><div class="stat-meta">Requieren gestión</div></div>
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>
         `;
-
         const tbody = document.getElementById('adminTableBody');
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>';
-            return;
-        }
+        if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>'; return; }
         tbody.innerHTML = data.map(l => `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
-                <td>
-                    <div>${l.ownerName || '—'}</div>
-                    <div class="cell-sub">${l.ownerEmail || '—'}</div>
-                </td>
+                <td><div>${l.ownerName || '—'}</div><div class="cell-sub">${l.ownerEmail || '—'}</div></td>
                 <td><span style="font-family:monospace;font-size:12px;">${l.ownerRut || '—'}</span></td>
                 <td>${l.stateOfFormation || '—'}</td>
                 <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
                 <td>${statusBadge(l.status)}</td>
                 <td>${einCell(l.ein)}</td>
-                <td>
-                    <div class="td-actions">
-                        <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')">
-                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            Editar
-                        </button>
-                        <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
-                    </div>
-                </td>
+                <td><div class="td-actions">
+                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Editar</button>
+                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
+                </div></td>
             </tr>
         `).join('');
     }
