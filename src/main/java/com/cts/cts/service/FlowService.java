@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
+import java.net.URLEncoder;
 
 @Service
 public class FlowService {
@@ -85,7 +86,9 @@ public class FlowService {
             params.put("token", token);
             String signature = sign(params);
 
-            String url = apiUrl + "/payment/getStatus?apiKey=" + apiKey + "&token=" + token + "&s=" + signature;
+            String url = apiUrl + "/payment/getStatus?apiKey=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8)
+                + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
+                + "&s=" + URLEncoder.encode(signature, StandardCharsets.UTF_8);
             String raw = restTemplate.getForObject(url, String.class);
             Map<String, Object> body = objectMapper.readValue(raw, new TypeReference<>() {});
 

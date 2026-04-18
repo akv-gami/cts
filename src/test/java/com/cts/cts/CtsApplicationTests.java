@@ -13,7 +13,10 @@ import org.springframework.test.context.TestPropertySource;
     "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
     "spring.jpa.hibernate.ddl-auto=create-drop",
     "jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970",
-    "jwt.expiration=86400000"
+    "jwt.expiration=86400000",
+    "flow.api-key=test-key",
+    "flow.secret-key=test-secret",
+    "app.base-url=http://localhost:8080"
 })
 class CtsApplicationTests {
 

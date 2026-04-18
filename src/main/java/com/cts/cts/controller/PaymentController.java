@@ -29,7 +29,7 @@ public class PaymentController {
 
     @PostMapping("/confirm")
     public ResponseEntity<String> confirm(@RequestParam("token") String token) {
-        log.info("Confirmación de pago recibida de Flow para token: {}", token);
+        log.info("Confirmación de pago recibida de Flow para token: {}...", token.substring(0, Math.min(8, token.length())));
         paymentService.processConfirmation(token);
         return ResponseEntity.ok("OK");
     }
