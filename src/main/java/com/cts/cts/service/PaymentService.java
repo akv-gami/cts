@@ -25,7 +25,7 @@ public class PaymentService {
     private final LlcRepository llcRepository;
     private final FlowService flowService;
 
-    @Value("${flow.service-price:150000}")
+    @Value("${flow.service-price:250000}")
     private int servicePrice;
 
     public PaymentService(PaymentRepository paymentRepository, LlcRepository llcRepository, FlowService flowService) {
@@ -34,19 +34,15 @@ public class PaymentService {
         this.flowService = flowService;
     }
 
-    private Long getCurrentUserId() {
-        UserEntity user = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getId();
-    }
-
-    private String getCurrentUserEmail() {
-        UserEntity user = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getEmail();
+    private UserEntity getCurrentUser() {
+        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Transactional
     public String initiatePayment(Long llcId) {
-        Long userId = getCurrentUserId();
+        UserEntity currentUser = getCurrentUser();
+        Long userId = currentUser.getId();
+        String email = currentUser.getEmail();
 
         LlcEntity llc = llcRepository.findById(llcId)
                 .orElseThrow(() -> new NotFoundException("LLC no encontrada"));
@@ -59,9 +55,12 @@ public class PaymentService {
             throw new IllegalArgumentException("Esta LLC ya tiene un pago confirmado");
         }
 
+        if (paymentRepository.existsByLlcIdAndStatus(llcId, PaymentStatus.PENDING)) {
+            throw new IllegalArgumentException("Ya tienes un pago en proceso para esta LLC. Revisa tu correo o intenta en unos minutos.");
+        }
+
         String commerceOrder = "CTS-" + llcId + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         String subject = "Constitución LLC: " + llc.getBusinessName();
-        String email = getCurrentUserEmail();
 
         FlowService.FlowPaymentResult result = flowService.createPayment(commerceOrder, subject, servicePrice, email);
 
@@ -85,7 +84,7 @@ public class PaymentService {
     public void processConfirmation(String token) {
         PaymentEntity payment = paymentRepository.findByFlowToken(token).orElse(null);
         if (payment == null) {
-            log.warn("Confirmación recibida para token desconocido: {}", token);
+            log.warn("Confirmación recibida para token desconocido");
             return;
         }
 
@@ -122,13 +121,13 @@ public class PaymentService {
                 default -> log.info("Pago {} en estado pendiente ({})", payment.getCommerceOrder(), status.status());
             }
         } catch (Exception e) {
-            log.error("Error al procesar confirmación de pago para token {}: {}", token, e.getMessage(), e);
+            log.error("Error al procesar confirmación de pago: {}", e.getMessage(), e);
         }
     }
 
     @Transactional(readOnly = true)
     public List<PaymentStatusDto> getMyPayments() {
-        Long userId = getCurrentUserId();
+        Long userId = getCurrentUser().getId();
         return paymentRepository.findByUserId(userId).stream()
                 .map(p -> new PaymentStatusDto(
                         p.getLlcId(),

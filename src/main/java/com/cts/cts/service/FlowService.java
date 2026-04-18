@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -13,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
-import java.net.URLEncoder;
 
 @Service
 public class FlowService {
@@ -36,7 +37,14 @@ public class FlowService {
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public FlowService() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10_000);
+        factory.setReadTimeout(30_000);
+        this.restTemplate = new RestTemplate(factory);
+    }
 
     public record FlowPaymentResult(String url, String token, Long flowOrder) {}
     public record FlowStatusResult(int status, Long flowOrder, String commerceOrder, Integer amount) {}
@@ -89,6 +97,7 @@ public class FlowService {
             String url = apiUrl + "/payment/getStatus?apiKey=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8)
                 + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
                 + "&s=" + URLEncoder.encode(signature, StandardCharsets.UTF_8);
+
             String raw = restTemplate.getForObject(url, String.class);
             Map<String, Object> body = objectMapper.readValue(raw, new TypeReference<>() {});
 
