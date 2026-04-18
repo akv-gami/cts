@@ -138,4 +138,8 @@ public class PaymentService {
                         p.getPaidAt()
                 )).toList();
     }
+
+    public int getServicePrice() {
+        return servicePrice;
+    }
 }

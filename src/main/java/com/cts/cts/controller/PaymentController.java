@@ -38,4 +38,10 @@ public class PaymentController {
     public ResponseEntity<List<PaymentStatusDto>> getMyPayments() {
         return ResponseEntity.ok(paymentService.getMyPayments());
     }
+
+
+@GetMapping("/price")
+public ResponseEntity<Map<String, Integer>> getServicePrice() {
+    return ResponseEntity.ok(Map.of("price", paymentService.getServicePrice()));
+}
 }

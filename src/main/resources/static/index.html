@@ -555,14 +555,27 @@
         } else if (res.status === 401) { logout(); }
     }
 
-    function openPayModal(llcId, llcName) {
+    async function openPayModal(llcId, llcName) {
         document.getElementById('payLlcId').value = llcId;
         document.getElementById('payModalLlcName').innerText = llcName;
         document.getElementById('payConfirmBtn').disabled = false;
         document.getElementById('payConfirmBtn').innerText = 'Pagar con WebPay / Tarjeta';
-        openModal('payModal');
+
+    
+    try {
+        const res = await fetch('/api/payments/price', { headers: { 'Authorization': 'Bearer ' + token() } });
+        if (res.ok) {
+            const data = await res.json();
+            const formatted = '$' + data.price.toLocaleString('es-CL') + ' CLP';
+            document.getElementById('payModalAmount').innerText = formatted;
+        }
+    } catch (e) {
+        document.getElementById('payModalAmount').innerText = '$250.000 CLP'; // fallback
     }
 
+        openModal('payModal');
+    }
+    
     async function confirmPay() {
         const llcId = document.getElementById('payLlcId').value;
         const btn = document.getElementById('payConfirmBtn');
