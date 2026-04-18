@@ -61,6 +61,8 @@
         .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
         .btn-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
         .btn-success:hover { background: rgba(34,197,94,0.2); }
+        .btn-pay { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; }
+        .btn-pay:hover { background: linear-gradient(135deg, #16a34a, #15803d); transform: translateY(-1px); }
         .btn-link { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 0; margin-top: 12px; display: block; text-align: center; width: 100%; }
         .btn-link:hover { text-decoration: underline; }
         .navbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 40; }
@@ -109,6 +111,12 @@
         .badge-5472::before { background: var(--danger); }
         .badge-ok { background: var(--success-bg); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
         .badge-ok::before { background: var(--success); }
+        .badge-paid { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .badge-paid::before { background: #22c55e; }
+        .badge-rejected { background: var(--danger-bg); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .badge-rejected::before { background: var(--danger); }
+        .badge-nopay { background: rgba(255,255,255,0.04); color: var(--subtext); border: 1px solid var(--border); }
+        .badge-nopay::before { background: var(--subtext); }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; }
         .overlay.open { display: flex; }
         .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
@@ -117,17 +125,30 @@
         .btn-x { background: var(--surface-2); border: 1px solid var(--border-2); color: var(--subtext); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0; }
         .btn-x:hover { color: var(--text); }
         .modal-body { padding: 24px; }
+        .pay-modal-amount { font-size: 36px; font-weight: 800; color: var(--success); letter-spacing: -2px; margin: 16px 0 6px; }
+        .pay-modal-llc { font-size: 14px; color: var(--subtext); margin-bottom: 20px; }
+        .pay-modal-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        .pay-modal-feature { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--subtext); }
+        .pay-modal-feature svg { width: 16px; height: 16px; color: var(--success); flex-shrink: 0; }
+        .pay-modal-note { font-size: 12px; color: var(--subtext); text-align: center; margin-top: 12px; }
         .admin-banner { background: linear-gradient(135deg, rgba(167,139,250,0.15) 0%, rgba(79,110,247,0.15) 100%); border: 1px solid rgba(167,139,250,0.2); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
         .admin-banner svg { width: 20px; height: 20px; color: var(--purple); flex-shrink: 0; }
         .admin-banner span { font-size: 13px; color: #c4b5fd; }
         .admin-banner strong { color: var(--purple); }
         .select-field { width: 100%; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; cursor: pointer; appearance: none; }
         .select-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-        .td-actions { display: flex; gap: 8px; align-items: center; }
+        .td-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; font-size: 13px; font-weight: 500; z-index: 200; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast-success { border-color: rgba(34,197,94,0.3); color: #86efac; }
+        .toast-error { border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+        .toast-info { border-color: rgba(79,110,247,0.3); color: #a5b4fc; }
         #authSection, #appSection { display: none; }
     </style>
 </head>
 <body>
+
+<div id="toast" class="toast"></div>
 
 <div id="authSection" class="auth-wrap">
     <div class="auth-box">
@@ -201,7 +222,7 @@
                 <thead>
                     <tr>
                         <th>Entidad</th><th>Titular</th><th>Jurisdicción</th>
-                        <th>Annual Report</th><th>Form 5472</th><th>Estado</th><th>EIN</th><th>Acciones</th>
+                        <th>Annual Report</th><th>Form 5472</th><th>Estado</th><th>Pago</th><th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="userTableBody"></tbody>
@@ -236,6 +257,7 @@
     </main>
 </div>
 
+<!-- Modal registrar LLC -->
 <div id="llcModal" class="overlay">
     <div class="modal">
         <div class="modal-head">
@@ -261,6 +283,45 @@
     </div>
 </div>
 
+<!-- Modal pagar LLC -->
+<div id="payModal" class="overlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Pagar servicio de constitución</h3>
+            <button class="btn-x" onclick="closeModal('payModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="payLlcId">
+            <div class="pay-modal-amount" id="payModalAmount">$150.000 CLP</div>
+            <div class="pay-modal-llc" id="payModalLlcName"></div>
+            <div class="pay-modal-features">
+                <div class="pay-modal-feature">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Constitución oficial de tu LLC en EE.UU.
+                </div>
+                <div class="pay-modal-feature">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Operating Agreement personalizado incluido
+                </div>
+                <div class="pay-modal-feature">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Gestión del EIN ante el IRS
+                </div>
+                <div class="pay-modal-feature">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Seguimiento de Annual Report y Form 5472
+                </div>
+            </div>
+            <button class="btn btn-pay" style="width:100%; justify-content:center; padding:13px;" onclick="confirmPay()" id="payConfirmBtn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                Pagar con WebPay / Tarjeta
+            </button>
+            <p class="pay-modal-note">Serás redirigido a Flow para completar el pago de forma segura. Aceptamos débito, crédito y transferencia bancaria.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar LLC (admin) -->
 <div id="editModal" class="overlay">
     <div class="modal">
         <div class="modal-head">
@@ -293,14 +354,19 @@
         try {
             const payload = JSON.parse(atob(jwtToken.split('.')[1]));
             return Date.now() < payload.exp * 1000;
-        } catch (e) {
-            return false;
-        }
+        } catch (e) { return false; }
     }
 
     function clearSession() {
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('userRole');
+    }
+
+    function showToast(msg, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.className = `toast toast-${type} show`;
+        toast.innerText = msg;
+        setTimeout(() => { toast.className = 'toast'; }, 4000);
     }
 
     function setAuthUI({ title, sub, btnText, showName, showEmail, showPassword, showNewPass, showConfirm, showForgotLink, toggleText, showToggle }) {
@@ -322,49 +388,27 @@
     function showLogin() {
         authMode = 'login';
         document.getElementById('toggleLink').onclick = toggleAuth;
-        setAuthUI({
-            title: 'Bienvenido de vuelta', sub: 'Ingresa a tu panel de gestión corporativa',
-            btnText: 'Iniciar Sesión', showName: false, showEmail: true, showPassword: true,
-            showNewPass: false, showConfirm: false, showForgotLink: true,
-            showToggle: true, toggleText: '¿No tienes cuenta? Crear una nueva'
-        });
+        setAuthUI({ title: 'Bienvenido de vuelta', sub: 'Ingresa a tu panel de gestión corporativa', btnText: 'Iniciar Sesión', showName: false, showEmail: true, showPassword: true, showNewPass: false, showConfirm: false, showForgotLink: true, showToggle: true, toggleText: '¿No tienes cuenta? Crear una nueva' });
     }
 
     function toggleAuth() {
         if (authMode === 'login') {
             authMode = 'register';
             document.getElementById('toggleLink').onclick = toggleAuth;
-            setAuthUI({
-                title: 'Crear cuenta', sub: 'Únete a CTS Consulting',
-                btnText: 'Registrarse', showName: true, showEmail: true, showPassword: true,
-                showNewPass: false, showConfirm: false, showForgotLink: false,
-                showToggle: true, toggleText: '¿Ya tienes cuenta? Inicia sesión'
-            });
-        } else {
-            showLogin();
-        }
+            setAuthUI({ title: 'Crear cuenta', sub: 'Únete a CTS Consulting', btnText: 'Registrarse', showName: true, showEmail: true, showPassword: true, showNewPass: false, showConfirm: false, showForgotLink: false, showToggle: true, toggleText: '¿Ya tienes cuenta? Inicia sesión' });
+        } else { showLogin(); }
     }
 
     function showForgot() {
         authMode = 'forgot';
         document.getElementById('toggleLink').onclick = showLogin;
-        setAuthUI({
-            title: 'Recuperar contraseña', sub: 'Ingresa tu correo y te enviaremos un enlace',
-            btnText: 'Enviar enlace de recuperación', showName: false, showEmail: true, showPassword: false,
-            showNewPass: false, showConfirm: false, showForgotLink: false,
-            showToggle: true, toggleText: '← Volver al inicio de sesión'
-        });
+        setAuthUI({ title: 'Recuperar contraseña', sub: 'Ingresa tu correo y te enviaremos un enlace', btnText: 'Enviar enlace de recuperación', showName: false, showEmail: true, showPassword: false, showNewPass: false, showConfirm: false, showForgotLink: false, showToggle: true, toggleText: '← Volver al inicio de sesión' });
     }
 
-    function showReset(token) {
-        pendingResetToken = token;
+    function showReset(tkn) {
+        pendingResetToken = tkn;
         authMode = 'reset';
-        setAuthUI({
-            title: 'Nueva contraseña', sub: 'Elige una contraseña segura para tu cuenta',
-            btnText: 'Cambiar contraseña', showName: false, showEmail: false, showPassword: false,
-            showNewPass: true, showConfirm: true, showForgotLink: false,
-            showToggle: false, toggleText: ''
-        });
+        setAuthUI({ title: 'Nueva contraseña', sub: 'Elige una contraseña segura para tu cuenta', btnText: 'Cambiar contraseña', showName: false, showEmail: false, showPassword: false, showNewPass: true, showConfirm: true, showForgotLink: false, showToggle: false, toggleText: '' });
         window.history.replaceState({}, document.title, '/index.html');
     }
 
@@ -375,15 +419,9 @@
         successEl.style.display = 'none';
 
         if (authMode === 'login') {
-            const payload = {
-                email: document.getElementById('authEmail').value,
-                password: document.getElementById('authPassword').value
-            };
+            const payload = { email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value };
             try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('jwtToken', data.token);
@@ -391,27 +429,15 @@
                     checkAuth();
                 } else {
                     const body = await res.json().catch(() => ({}));
-                    errEl.innerText = (res.status === 401 || res.status === 403)
-                        ? 'Correo o contraseña incorrectos'
-                        : (body.error || 'Error al iniciar sesión');
+                    errEl.innerText = (res.status === 401 || res.status === 403) ? 'Correo o contraseña incorrectos' : (body.error || 'Error al iniciar sesión');
                     errEl.style.display = 'block';
                 }
-            } catch (e) {
-                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
-                errEl.style.display = 'block';
-            }
+            } catch (e) { errEl.innerText = 'Error de conexión. Intenta nuevamente.'; errEl.style.display = 'block'; }
 
         } else if (authMode === 'register') {
-            const payload = {
-                name: document.getElementById('authName').value,
-                email: document.getElementById('authEmail').value,
-                password: document.getElementById('authPassword').value
-            };
+            const payload = { name: document.getElementById('authName').value, email: document.getElementById('authEmail').value, password: document.getElementById('authPassword').value };
             try {
-                const res = await fetch('/api/auth/register', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('jwtToken', data.token);
@@ -419,25 +445,15 @@
                     checkAuth();
                 } else {
                     const body = await res.json().catch(() => ({}));
-                    if (body.fields) {
-                        errEl.innerText = Object.values(body.fields)[0] || 'Revisa los datos ingresados';
-                    } else {
-                        errEl.innerText = body.error || 'Error al crear la cuenta';
-                    }
+                    errEl.innerText = body.fields ? (Object.values(body.fields)[0] || 'Revisa los datos ingresados') : (body.error || 'Error al crear la cuenta');
                     errEl.style.display = 'block';
                 }
-            } catch (e) {
-                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
-                errEl.style.display = 'block';
-            }
+            } catch (e) { errEl.innerText = 'Error de conexión. Intenta nuevamente.'; errEl.style.display = 'block'; }
 
         } else if (authMode === 'forgot') {
             const email = document.getElementById('authEmail').value;
             try {
-                const res = await fetch('/api/auth/forgot-password', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
+                const res = await fetch('/api/auth/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
                 const body = await res.json().catch(() => ({}));
                 if (res.ok) {
                     successEl.innerText = body.message || 'Si el correo está registrado, recibirás un enlace pronto.';
@@ -446,33 +462,16 @@
                     const btn = document.getElementById('authBtn');
                     btn.disabled = true;
                     setTimeout(() => { btn.disabled = false; }, 30000);
-                } else {
-                    errEl.innerText = body.error || 'No se pudo procesar la solicitud';
-                    errEl.style.display = 'block';
-                }
-            } catch (e) {
-                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
-                errEl.style.display = 'block';
-            }
+                } else { errEl.innerText = body.error || 'No se pudo procesar la solicitud'; errEl.style.display = 'block'; }
+            } catch (e) { errEl.innerText = 'Error de conexión. Intenta nuevamente.'; errEl.style.display = 'block'; }
 
         } else if (authMode === 'reset') {
             const newPass = document.getElementById('newPassword').value;
             const confirmPass = document.getElementById('confirmPassword').value;
-            if (newPass.length < 8) {
-                errEl.innerText = 'La contraseña debe tener al menos 8 caracteres';
-                errEl.style.display = 'block';
-                return;
-            }
-            if (newPass !== confirmPass) {
-                errEl.innerText = 'Las contraseñas no coinciden';
-                errEl.style.display = 'block';
-                return;
-            }
+            if (newPass.length < 8) { errEl.innerText = 'La contraseña debe tener al menos 8 caracteres'; errEl.style.display = 'block'; return; }
+            if (newPass !== confirmPass) { errEl.innerText = 'Las contraseñas no coinciden'; errEl.style.display = 'block'; return; }
             try {
-                const res = await fetch('/api/auth/reset-password', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: pendingResetToken, newPassword: newPass })
-                });
+                const res = await fetch('/api/auth/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: pendingResetToken, newPassword: newPass }) });
                 const body = await res.json().catch(() => ({}));
                 if (res.ok) {
                     successEl.innerText = '✓ Contraseña actualizada. Ya puedes iniciar sesión.';
@@ -480,33 +479,22 @@
                     document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = '';
                     setTimeout(showLogin, 2500);
-                } else {
-                    errEl.innerText = body.error || 'No se pudo cambiar la contraseña';
-                    errEl.style.display = 'block';
-                }
-            } catch (e) {
-                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
-                errEl.style.display = 'block';
-            }
+                } else { errEl.innerText = body.error || 'No se pudo cambiar la contraseña'; errEl.style.display = 'block'; }
+            } catch (e) { errEl.innerText = 'Error de conexión. Intenta nuevamente.'; errEl.style.display = 'block'; }
         }
     }
 
-    function logout() {
-        clearSession();
-        checkAuth();
-    }
+    function logout() { clearSession(); checkAuth(); }
 
     function checkAuth() {
         const jwtToken = localStorage.getItem('jwtToken');
         userRole = localStorage.getItem('userRole');
-
         if (!isTokenValid(jwtToken)) {
             clearSession();
             document.getElementById('authSection').style.display = 'flex';
             document.getElementById('appSection').style.display = 'none';
             return;
         }
-
         document.getElementById('authSection').style.display = 'none';
         document.getElementById('appSection').style.display = 'block';
         document.getElementById('roleBadge').innerText = userRole === 'ADMIN' ? 'Admin' : 'Usuario';
@@ -556,19 +544,8 @@
 
     async function submitLlc() {
         const rutEl = document.getElementById('rut');
-        if (!validateRUT(rutEl.value)) {
-            rutEl.classList.add('err');
-            document.getElementById('rutError').style.display = 'block';
-            return;
-        }
-        const payload = {
-            businessName: document.getElementById('bizName').value,
-            ownerRut: rutEl.value,
-            ownerName: document.getElementById('ownerName').value,
-            ownerEmail: document.getElementById('ownerEmail').value,
-            stateOfFormation: document.getElementById('state').value,
-            hasPhysicalPresenceInUs: document.getElementById('physicalPresence').checked
-        };
+        if (!validateRUT(rutEl.value)) { rutEl.classList.add('err'); document.getElementById('rutError').style.display = 'block'; return; }
+        const payload = { businessName: document.getElementById('bizName').value, ownerRut: rutEl.value, ownerName: document.getElementById('ownerName').value, ownerEmail: document.getElementById('ownerEmail').value, stateOfFormation: document.getElementById('state').value, hasPhysicalPresenceInUs: document.getElementById('physicalPresence').checked };
         const res = await fetch('/api/llc/onboarding', { method: 'POST', headers: authHeader(), body: JSON.stringify(payload) });
         if (res.ok) {
             document.querySelectorAll('#llcModal input[type="text"], #llcModal input[type="email"]').forEach(i => i.value = '');
@@ -578,16 +555,44 @@
         } else if (res.status === 401) { logout(); }
     }
 
+    function openPayModal(llcId, llcName) {
+        document.getElementById('payLlcId').value = llcId;
+        document.getElementById('payModalLlcName').innerText = llcName;
+        document.getElementById('payConfirmBtn').disabled = false;
+        document.getElementById('payConfirmBtn').innerText = 'Pagar con WebPay / Tarjeta';
+        openModal('payModal');
+    }
+
+    async function confirmPay() {
+        const llcId = document.getElementById('payLlcId').value;
+        const btn = document.getElementById('payConfirmBtn');
+        btn.disabled = true;
+        btn.innerText = 'Redirigiendo a Flow...';
+        try {
+            const res = await fetch(`/api/payments/create/${llcId}`, { method: 'POST', headers: authHeader() });
+            if (res.status === 401) { logout(); return; }
+            const data = await res.json();
+            if (data.paymentUrl) {
+                window.location.href = data.paymentUrl;
+            } else {
+                showToast(data.error || 'Error al iniciar el pago', 'error');
+                btn.disabled = false;
+                btn.innerText = 'Pagar con WebPay / Tarjeta';
+            }
+        } catch (e) {
+            showToast('Error de conexión. Intenta nuevamente.', 'error');
+            btn.disabled = false;
+            btn.innerText = 'Pagar con WebPay / Tarjeta';
+        }
+    }
+
     async function downloadPdf(id, name, isAdmin = false) {
         const url = isAdmin ? `/api/admin/llcs/${id}/pdf` : `/api/llc/${id}/pdf`;
         const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         if (res.ok) {
             const blob = await res.blob();
-            const a = Object.assign(document.createElement('a'), {
-                href: window.URL.createObjectURL(blob),
-                download: name.replace(/ /g, '_') + '_OA.pdf'
-            });
+            const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: name.replace(/ /g, '_') + '_OA.pdf' });
             document.body.appendChild(a); a.click(); a.remove();
         }
     }
@@ -627,32 +632,58 @@
         return `<span class="badge ${cls}">${label}</span>`;
     }
 
+    function paymentBadge(p) {
+        if (!p) return `<span class="badge badge-nopay">Sin pago</span>`;
+        const map = {
+            PAID: ['badge-paid', '✓ Pagado'],
+            PENDING: ['badge-pending', 'Pago pendiente'],
+            REJECTED: ['badge-rejected', 'Rechazado'],
+            CANCELLED: ['badge-nopay', 'Cancelado']
+        };
+        const [cls, label] = map[p.status] || ['badge-nopay', p.status];
+        return `<span class="badge ${cls}">${label}</span>`;
+    }
+
     function einCell(ein) {
         return `<span style="font-family:monospace;font-size:13px;color:${ein ? 'var(--text)' : 'var(--subtext)'}">${ein || '—'}</span>`;
     }
 
     const deleteIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
-    const editIcon  = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
+    const editIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
     const downloadIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`;
+    const cardIcon = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>`;
 
     async function loadUserData() {
-        const res = await fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } });
-        if (res.status === 401) { logout(); return; }
-        const data = await res.json();
-        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
-              pending = data.filter(l => l.status === 'PENDING').length,
-              needs5472 = data.filter(l => l.requiresForm5472).length;
+        const [llcRes, payRes] = await Promise.all([
+            fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } }),
+            fetch('/api/payments/mine', { headers: { 'Authorization': 'Bearer ' + token() } })
+        ]);
+        if (llcRes.status === 401) { logout(); return; }
+
+        const data = await llcRes.json();
+        const payments = payRes.ok ? await payRes.json() : [];
+        const paymentMap = {};
+        payments.forEach(p => { if (!paymentMap[p.llcId] || p.status === 'PAID') paymentMap[p.llcId] = p; });
+
+        const total = data.length;
+        const active = data.filter(l => l.status === 'ACTIVE').length;
+        const pending = data.filter(l => l.status === 'PENDING').length;
+        const paid = payments.filter(p => p.status === 'PAID').length;
+
         document.getElementById('userStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">En proceso</div><div class="stat-value">${pending}</div><div class="stat-meta">Pendientes de activar</div></div>
-            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>`;
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div><div class="stat-label">Pagadas</div><div class="stat-value">${paid}</div><div class="stat-meta">Con pago confirmado</div></div>`;
+
         const tbody = document.getElementById('userTableBody');
-        if (!data.length) {
-            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>';
-            return;
-        }
-        tbody.innerHTML = data.map(l => `
+        if (!data.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>'; return; }
+
+        tbody.innerHTML = data.map(l => {
+            const pay = paymentMap[l.id];
+            const isPaid = pay && pay.status === 'PAID';
+            const payBtn = !isPaid ? `<button class="btn btn-pay btn-sm" onclick="openPayModal(${l.id}, '${l.businessName.replace(/'/g, "\\'")}')">${cardIcon} Pagar</button>` : '';
+            return `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
                 <td><div>${l.ownerName || '—'}</div><div class="cell-sub">${l.ownerEmail || '—'}</div></td>
@@ -660,31 +691,28 @@
                 <td><div class="cell-sub">${l.annualReportDueDate || '—'}</div></td>
                 <td>${l.requiresForm5472 ? '<span class="badge badge-5472">Requerido</span>' : '<span class="badge badge-ok">Exento</span>'}</td>
                 <td>${statusBadge(l.status)}</td>
-                <td>${einCell(l.ein)}</td>
+                <td>${paymentBadge(pay)}</td>
                 <td><div class="td-actions">
-                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')">${downloadIcon} OA</button>
+                    ${payBtn}
+                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName.replace(/'/g, "\\'")}')">${downloadIcon} OA</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLlc(${l.id})">${deleteIcon}</button>
                 </div></td>
-            </tr>`).join('');
+            </tr>`;
+        }).join('');
     }
 
     async function loadAdminData() {
         const res = await fetch('/api/admin/llcs', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
-              pending = data.filter(l => l.status === 'PENDING').length,
-              withEin = data.filter(l => l.ein).length;
+        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length, pending = data.filter(l => l.status === 'PENDING').length, withEin = data.filter(l => l.ein).length;
         document.getElementById('adminStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Pendientes</div><div class="stat-value">${pending}</div><div class="stat-meta">Requieren gestión</div></div>
             <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>`;
         const tbody = document.getElementById('adminTableBody');
-        if (!data.length) {
-            tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>';
-            return;
-        }
+        if (!data.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>'; return; }
         tbody.innerHTML = data.map(l => `
             <tr>
                 <td><div class="cell-name">${l.businessName}</div></td>
@@ -696,7 +724,7 @@
                 <td>${einCell(l.ein)}</td>
                 <td><div class="td-actions">
                     <button class="btn btn-ghost btn-sm" onclick="openEditModal(${l.id}, '${l.status}', '${l.ein || ''}')">${editIcon} Editar</button>
-                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
+                    <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName.replace(/'/g, "\\'")}', true)">OA</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLlcAdmin(${l.id})">${deleteIcon}</button>
                 </div></td>
             </tr>`).join('');
@@ -705,6 +733,8 @@
     window.onload = () => {
         const params = new URLSearchParams(window.location.search);
         const resetToken = params.get('reset');
+        const paymentParam = params.get('payment');
+
         if (resetToken) {
             showReset(resetToken);
             document.getElementById('authSection').style.display = 'flex';
@@ -712,6 +742,11 @@
         } else {
             showLogin();
             checkAuth();
+            if (paymentParam === 'done' && isTokenValid(localStorage.getItem('jwtToken'))) {
+                window.history.replaceState({}, document.title, '/index.html');
+                setTimeout(() => showToast('Pago procesado. Verificando confirmación...', 'info'), 800);
+                setTimeout(() => loadUserData(), 3000);
+            }
         }
     };
 </script>

@@ -3,17 +3,42 @@
     {
       "name": "jwt.secret",
       "type": "java.lang.String",
-      "description": "Clave secreta utilizada para firmar los tokens JWT. Debe ser una cadena Base64 larga y segura."
+      "description": "Clave secreta para firmar tokens JWT."
     },
     {
       "name": "jwt.expiration",
       "type": "java.lang.Long",
-      "description": "Tiempo de expiracion del token JWT en milisegundos (ej. 86400000 para 24 horas)."
+      "description": "Expiración del token JWT en milisegundos."
     },
     {
       "name": "notification.days-before",
       "type": "java.lang.Integer",
-      "description": "Cantidad de días de anticipación con los que se enviará el correo de recordatorio de vencimiento (ej. 30)."
+      "description": "Días de anticipación para recordatorios de vencimiento."
+    },
+    {
+      "name": "app.base-url",
+      "type": "java.lang.String",
+      "description": "URL base de la aplicación para enlaces en correos y webhooks."
+    },
+    {
+      "name": "flow.api-key",
+      "type": "java.lang.String",
+      "description": "API Key de Flow."
+    },
+    {
+      "name": "flow.secret-key",
+      "type": "java.lang.String",
+      "description": "Secret Key de Flow para firma HMAC-SHA256."
+    },
+    {
+      "name": "flow.api-url",
+      "type": "java.lang.String",
+      "description": "URL base de la API de Flow. Sandbox: https://sandbox.flow.cl/api"
+    },
+    {
+      "name": "flow.service-price",
+      "type": "java.lang.Integer",
+      "description": "Precio del servicio en pesos chilenos (CLP)."
     }
   ]
 }

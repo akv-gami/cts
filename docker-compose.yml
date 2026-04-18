@@ -33,3 +33,8 @@ services:
 
 volumes:
   postgres_data:
+
+  - FLOW_API_KEY=73F29ABF-2745-4EFF-B61E-5C885LAA2A03
+  - FLOW_SECRET_KEY=427b3f6793bafe2564ff4478d52053a459d0c0f9
+  - FLOW_API_URL=https://sandbox.flow.cl/api
+  - FLOW_SERVICE_PRICE=250000
