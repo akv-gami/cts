@@ -2,6 +2,8 @@ package com.cts.cts.service;
 
 import com.cts.cts.model.LlcEntity;
 import com.cts.cts.repository.LlcRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +17,8 @@ import java.util.Locale;
 
 @Service
 public class NotificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final LlcRepository llcRepository;
     private final JavaMailSender mailSender;
@@ -35,18 +39,21 @@ public class NotificationService {
 
     @Scheduled(cron = "0 0 9 * * *")
     public void checkUpcomingDeadlines() {
-        if (fromEmail == null || fromEmail.isBlank()) return;
+        if (fromEmail == null || fromEmail.isBlank()) {
+            log.warn("MAIL_USERNAME no configurado. Las notificaciones por correo están desactivadas.");
+            return;
+        }
 
         LocalDate today = LocalDate.now();
         LocalDate threshold = today.plusDays(daysBefore);
-
         List<LlcEntity> llcs = llcRepository.findAll();
+
+        log.info("Revisando vencimientos para {} entidades. Umbral: {} días.", llcs.size(), daysBefore);
 
         for (LlcEntity llc : llcs) {
             if (llc.getAnnualReportDueDate() == null || llc.getOwnerEmail() == null) continue;
 
             LocalDate due = llc.getAnnualReportDueDate();
-
             if (!due.isBefore(today) && !due.isAfter(threshold)) {
                 sendAnnualReportReminder(llc);
             }
@@ -76,13 +83,14 @@ public class NotificationService {
                 ", vence el " + llc.getAnnualReportDueDate().format(DATE_FORMAT) + ".\n\n" +
                 "El no presentar el Annual Report a tiempo puede resultar en la disolución administrativa " +
                 "de su LLC por parte del Secretario de Estado.\n\n" +
-                "Por favor contáctenos a la brevedad si necesita asistencia para cumplir con esta obligación.\n\n" +
-                "Saludos,\n" +
-                "CTS Consulting\n" +
-                "Equipo de Cumplimiento Corporativo"
+                "Por favor contáctenos si necesita asistencia.\n\n" +
+                "Saludos,\nCTS Consulting"
             );
             mailSender.send(message);
-        } catch (Exception ignored) {
+            log.info("Recordatorio Annual Report enviado a {} para {}", llc.getOwnerEmail(), llc.getBusinessName());
+        } catch (Exception e) {
+            log.error("Error al enviar recordatorio Annual Report a {} para {}: {}",
+                    llc.getOwnerEmail(), llc.getBusinessName(), e.getMessage(), e);
         }
     }
 
@@ -99,13 +107,14 @@ public class NotificationService {
                 "Como propietario extranjero de una LLC clasificada como Disregarded Entity, " +
                 "está obligado a presentar el Form 5472 ante el IRS anualmente. " +
                 "El incumplimiento puede resultar en multas de $25,000 o más.\n\n" +
-                "Por favor contáctenos a la brevedad si necesita asistencia.\n\n" +
-                "Saludos,\n" +
-                "CTS Consulting\n" +
-                "Equipo de Cumplimiento Corporativo"
+                "Por favor contáctenos si necesita asistencia.\n\n" +
+                "Saludos,\nCTS Consulting"
             );
             mailSender.send(message);
-        } catch (Exception ignored) {
+            log.info("Recordatorio Form 5472 enviado a {} para {}", llc.getOwnerEmail(), llc.getBusinessName());
+        } catch (Exception e) {
+            log.error("Error al enviar recordatorio Form 5472 a {} para {}: {}",
+                    llc.getOwnerEmail(), llc.getBusinessName(), e.getMessage(), e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.cts.cts.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,16 +41,24 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/**",
-                    "/",
-                    "/landing.html",
-                    "/index.html"
-                ).permitAll()
+                .requestMatchers("/api/auth/**", "/", "/landing.html").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    String accept = request.getHeader("Accept");
+                    boolean isBrowserRequest = accept != null && accept.contains("text/html");
+                    if (isBrowserRequest) {
+                        response.sendRedirect("/landing.html");
+                    } else {
+                        response.setContentType("application/json");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("{\"error\": \"No autenticado\"}");
+                    }
+                })
+            );
         return http.build();
     }
 }
