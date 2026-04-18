@@ -15,7 +15,7 @@ services:
       - MAIL_HOST=smtp.gmail.com
       - MAIL_PORT=587
       - APP_BASE_URL=http://localhost:8080
-      - FLOW_API_URL=https://sandbox.flow.cl/api
+      - FLOW_API_URL=https://www.flow.cl/api
       - FLOW_SERVICE_PRICE=250000
 
   db:
