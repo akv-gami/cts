@@ -39,9 +39,8 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getMyPayments());
     }
 
-
-@GetMapping("/price")
-public ResponseEntity<Map<String, Integer>> getServicePrice() {
-    return ResponseEntity.ok(Map.of("price", paymentService.getServicePrice()));
-}
+    @GetMapping("/price")
+    public ResponseEntity<Map<String, Integer>> getServicePrice() {
+        return ResponseEntity.ok(Map.of("price", paymentService.getServicePrice()));
+    }
 }

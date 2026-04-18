@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,8 +23,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            fieldErrors.put(fieldName, error.getDefaultMessage());
+            if (error instanceof FieldError fe) {
+                fieldErrors.put(fe.getField(), error.getDefaultMessage());
+            }
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Datos inválidos", "fields", fieldErrors));
@@ -44,6 +48,13 @@ public class GlobalExceptionHandler {
             org.springframework.security.access.AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of("error", "No tienes permisos para realizar esta acción"));
+    }
+
+    
+    @ExceptionHandler({BadCredentialsException.class, DisabledException.class, LockedException.class})
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Correo o contraseña incorrectos"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
