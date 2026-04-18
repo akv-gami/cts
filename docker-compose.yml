@@ -7,20 +7,14 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cts_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       - JWT_EXPIRATION=86400000
       - MAIL_HOST=smtp.gmail.com
       - MAIL_PORT=587
-      - MAIL_USERNAME=
-      - MAIL_PASSWORD=
       - APP_BASE_URL=http://localhost:8080
-      - FLOW_API_KEY=73F29ABF-2745-4EFF-B61E-5C885LAA2A03
-      - FLOW_SECRET_KEY=427b3f6793bafe2564ff4478d52053a459d0c0f9
       - FLOW_API_URL=https://sandbox.flow.cl/api
       - FLOW_SERVICE_PRICE=250000
 
@@ -29,10 +23,8 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
-    environment:
-      - POSTGRES_DB=cts_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

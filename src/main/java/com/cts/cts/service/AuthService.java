@@ -66,10 +66,10 @@ public class AuthService {
     public AuthResponseDto login(AuthRequestDto request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-        UserEntity user = userRepository.findByEmail(request.email()).orElseThrow();
+        UserEntity user = userRepository.findByEmail(request.email())
+        .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
         return new AuthResponseDto(jwtService.generateToken(user), user.getRole().name());
     }
-
     @Transactional
     public void forgotPassword(ForgotPasswordDto dto) {
         if (fromEmail == null || fromEmail.isBlank()) {
