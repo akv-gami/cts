@@ -288,6 +288,21 @@
     let pendingResetToken = null;
     let userRole = null;
 
+    function isTokenValid(jwtToken) {
+        if (!jwtToken) return false;
+        try {
+            const payload = JSON.parse(atob(jwtToken.split('.')[1]));
+            return Date.now() < payload.exp * 1000;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function clearSession() {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('userRole');
+    }
+
     function setAuthUI({ title, sub, btnText, showName, showEmail, showPassword, showNewPass, showConfirm, showForgotLink, toggleText, showToggle }) {
         document.getElementById('authTitle').innerText = title;
         document.getElementById('authSub').innerText = sub;
@@ -477,30 +492,32 @@
     }
 
     function logout() {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('userRole');
+        clearSession();
         checkAuth();
     }
 
     function checkAuth() {
-        const token = localStorage.getItem('jwtToken');
+        const jwtToken = localStorage.getItem('jwtToken');
         userRole = localStorage.getItem('userRole');
-        if (token) {
-            document.getElementById('authSection').style.display = 'none';
-            document.getElementById('appSection').style.display = 'block';
-            document.getElementById('roleBadge').innerText = userRole === 'ADMIN' ? 'Admin' : 'Usuario';
-            if (userRole === 'ADMIN') {
-                document.getElementById('adminView').style.display = 'block';
-                document.getElementById('userView').style.display = 'none';
-                loadAdminData();
-            } else {
-                document.getElementById('userView').style.display = 'block';
-                document.getElementById('adminView').style.display = 'none';
-                loadUserData();
-            }
-        } else {
+
+        if (!isTokenValid(jwtToken)) {
+            clearSession();
             document.getElementById('authSection').style.display = 'flex';
             document.getElementById('appSection').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('authSection').style.display = 'none';
+        document.getElementById('appSection').style.display = 'block';
+        document.getElementById('roleBadge').innerText = userRole === 'ADMIN' ? 'Admin' : 'Usuario';
+        if (userRole === 'ADMIN') {
+            document.getElementById('adminView').style.display = 'block';
+            document.getElementById('userView').style.display = 'none';
+            loadAdminData();
+        } else {
+            document.getElementById('userView').style.display = 'block';
+            document.getElementById('adminView').style.display = 'none';
+            loadUserData();
         }
     }
 
@@ -623,8 +640,8 @@
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
         const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
-                pending = data.filter(l => l.status === 'PENDING').length,
-                needs5472 = data.filter(l => l.requiresForm5472).length;
+              pending = data.filter(l => l.status === 'PENDING').length,
+              needs5472 = data.filter(l => l.requiresForm5472).length;
         document.getElementById('userStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
@@ -656,8 +673,8 @@
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
         const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
-                pending = data.filter(l => l.status === 'PENDING').length,
-                withEin = data.filter(l => l.ein).length;
+              pending = data.filter(l => l.status === 'PENDING').length,
+              withEin = data.filter(l => l.ein).length;
         document.getElementById('adminStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>

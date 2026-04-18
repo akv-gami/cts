@@ -31,7 +31,6 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-        /* ─── NAVBAR ─── */
         .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 40px; height: 68px; display: flex; align-items: center; justify-content: space-between; background: rgba(11, 13, 20, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
         .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
         .nav-logo-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -50,7 +49,6 @@
         .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border-2); }
         .btn-outline:hover { background: var(--surface-2); border-color: #363a52; }
 
-        /* ─── HERO ─── */
         .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 40px 80px; position: relative; overflow: hidden; }
         .hero-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 900px; height: 500px; background: radial-gradient(ellipse at 50% 0%, rgba(79,110,247,0.18) 0%, transparent 70%); pointer-events: none; }
         .hero-glow-2 { position: absolute; bottom: -100px; left: 20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%); pointer-events: none; }
@@ -65,7 +63,6 @@
         .hero-trust-item { display: flex; align-items: center; gap: 6px; }
         .hero-trust-item svg { width: 15px; height: 15px; color: var(--success); }
 
-        /* ─── DASHBOARD PREVIEW ─── */
         .preview-wrap { width: 100%; max-width: 1080px; margin: 0 auto; position: relative; padding: 0 40px; }
         .preview-glow { position: absolute; inset: -40px; background: radial-gradient(ellipse at 50% 100%, rgba(79,110,247,0.12) 0%, transparent 60%); pointer-events: none; }
         .preview-frame { background: var(--surface); border: 1px solid var(--border-2); border-radius: 16px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05); }
@@ -99,16 +96,13 @@
         .pb-active { background: rgba(34,197,94,0.15); color: var(--success); }
         .pb-req { background: rgba(239,68,68,0.15); color: #fca5a5; }
         .pb-ok { background: rgba(34,197,94,0.15); color: var(--success); }
-        .pt-oa { background: rgba(34,197,94,0.12); color: var(--success); border: 1px solid rgba(34,197,94,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
 
-        /* ─── STATS BAR ─── */
         .stats-bar { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
         .stats-inner { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
         .stat-item { background: var(--surface); padding: 36px 32px; text-align: center; }
         .stat-num { font-size: 38px; font-weight: 800; letter-spacing: -2px; background: linear-gradient(135deg, var(--text) 0%, var(--subtext-2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .stat-desc { font-size: 14px; color: var(--subtext); margin-top: 6px; font-weight: 400; }
 
-        /* ─── FEATURES ─── */
         .section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
         .section-tag { display: inline-flex; align-items: center; gap: 7px; background: var(--accent-light); border: 1px solid rgba(79,110,247,0.2); color: #93a8fb; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.06em; }
         .section-tag svg { width: 13px; height: 13px; }
@@ -130,7 +124,6 @@
         .feat-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
         .feat-desc { font-size: 14px; color: var(--subtext-2); line-height: 1.65; }
 
-        /* ─── HOW IT WORKS ─── */
         .how-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         .how-inner { max-width: 1100px; margin: 0 auto; padding: 100px 40px; }
         .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 56px; position: relative; }
@@ -140,7 +133,6 @@
         .step-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
         .step-desc { font-size: 13px; color: var(--subtext-2); line-height: 1.6; }
 
-        /* ─── COMPLIANCE ─── */
         .compliance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
         .compliance-list { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
         .comp-item { display: flex; align-items: flex-start; gap: 14px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s; }
@@ -166,7 +158,6 @@
         .tl-text { font-size: 13px; font-weight: 500; }
         .tl-desc { font-size: 12px; color: var(--subtext-2); margin-top: 2px; }
 
-        /* ─── CTA FINAL ─── */
         .cta-section { padding: 100px 40px; text-align: center; position: relative; overflow: hidden; }
         .cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 700px; height: 400px; background: radial-gradient(ellipse, rgba(79,110,247,0.14) 0%, transparent 70%); pointer-events: none; }
         .cta-box { max-width: 640px; margin: 0 auto; position: relative; }
@@ -174,7 +165,6 @@
         .cta-box p { font-size: 16px; color: var(--subtext-2); line-height: 1.7; margin-bottom: 36px; }
         .cta-btns { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
-        /* ─── FOOTER ─── */
         footer { background: var(--surface); border-top: 1px solid var(--border); padding: 40px; }
         .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
         .footer-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
@@ -185,14 +175,11 @@
         .footer-links { display: flex; gap: 24px; }
         .footer-links a { font-size: 13px; color: var(--subtext); text-decoration: none; transition: color 0.2s; }
         .footer-links a:hover { color: var(--text); }
-
-        /* ─── DIVIDER ─── */
         .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 40px; }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="nav">
     <a href="/landing.html" class="nav-logo">
         <div class="nav-logo-icon">
@@ -205,13 +192,12 @@
         <a href="#como-funciona">Cómo funciona</a>
         <a href="#compliance">Cumplimiento</a>
     </div>
-    <div class="nav-cta">
+    <div class="nav-cta" id="navCta">
         <a href="/index.html" class="btn btn-ghost">Iniciar sesión</a>
         <a href="/index.html" class="btn btn-primary">Comenzar gratis</a>
     </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-glow"></div>
     <div class="hero-glow-2"></div>
@@ -244,7 +230,6 @@
     </div>
 </section>
 
-<!-- DASHBOARD PREVIEW -->
 <div class="preview-wrap">
     <div class="preview-glow"></div>
     <div class="preview-frame">
@@ -270,11 +255,7 @@
             </div>
             <div class="preview-table">
                 <div class="pt-head">
-                    <span>Entidad</span>
-                    <span>Titular</span>
-                    <span>Jurisdicción</span>
-                    <span>Form 5472</span>
-                    <span>Estado</span>
+                    <span>Entidad</span><span>Titular</span><span>Jurisdicción</span><span>Form 5472</span><span>Estado</span>
                 </div>
                 <div class="pt-row">
                     <div><div class="pt-name">TechStore LLC</div><div class="pt-sub">Delaware</div></div>
@@ -302,31 +283,17 @@
     </div>
 </div>
 
-<!-- STATS BAR -->
 <div class="stats-bar">
     <div class="stats-inner">
-        <div class="stat-item">
-            <div class="stat-num">+200</div>
-            <div class="stat-desc">LLCs constituidas</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num">50</div>
-            <div class="stat-desc">Estados disponibles</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num">100%</div>
-            <div class="stat-desc">Online desde Chile</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num">48h</div>
-            <div class="stat-desc">Tiempo promedio de proceso</div>
-        </div>
+        <div class="stat-item"><div class="stat-num">+200</div><div class="stat-desc">LLCs constituidas</div></div>
+        <div class="stat-item"><div class="stat-num">50</div><div class="stat-desc">Estados disponibles</div></div>
+        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-desc">Online desde Chile</div></div>
+        <div class="stat-item"><div class="stat-num">48h</div><div class="stat-desc">Tiempo promedio de proceso</div></div>
     </div>
 </div>
 
 <div class="divider"></div>
 
-<!-- FEATURES -->
 <section class="section" id="features">
     <div class="section-tag">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -334,47 +301,34 @@
     </div>
     <h2 class="section-title">Todo lo que necesitas para<br>operar en EE.UU.</h2>
     <p class="section-sub">Desde la constitución hasta el cumplimiento tributario anual, gestionamos cada paso del ciclo de vida de tu LLC.</p>
-
     <div class="features-grid">
         <div class="feat-card">
-            <div class="feat-icon fi-blue">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>
-            </div>
+            <div class="feat-icon fi-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div>
             <div class="feat-title">Constitución online</div>
             <div class="feat-desc">Registra tu LLC en cualquier estado de EE.UU. directamente desde Chile, sin necesidad de visa ni presencia física.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon fi-green">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            </div>
+            <div class="feat-icon fi-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
             <div class="feat-title">Operating Agreement</div>
             <div class="feat-desc">Genera automáticamente el documento legal fundacional de tu LLC, personalizado con tus datos y listo para usar.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon fi-purple">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            </div>
+            <div class="feat-icon fi-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
             <div class="feat-title">Cálculo de Form 5472</div>
             <div class="feat-desc">Determinamos automáticamente si tu LLC debe presentar el Form 5472 al IRS según tu perfil tributario como extranjero.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon fi-yellow">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </div>
+            <div class="feat-icon fi-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
             <div class="feat-title">Tracker de Annual Report</div>
             <div class="feat-desc">Calcula automáticamente la fecha de vencimiento del Annual Report según el estado de formación de tu empresa.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon fi-red">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-            </div>
+            <div class="feat-icon fi-red"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div>
             <div class="feat-title">Gestión de EIN</div>
             <div class="feat-desc">Seguimiento del Employer Identification Number de tu LLC, el equivalente al RUT para operar en el sistema tributario de EE.UU.</div>
         </div>
         <div class="feat-card">
-            <div class="feat-icon fi-cyan">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </div>
+            <div class="feat-icon fi-cyan"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
             <div class="feat-title">Panel seguro y privado</div>
             <div class="feat-desc">Autenticación con JWT, cifrado de contraseñas con BCrypt y aislamiento total de datos entre usuarios.</div>
         </div>
@@ -383,7 +337,6 @@
 
 <div class="divider"></div>
 
-<!-- COMO FUNCIONA -->
 <div class="how-wrap" id="como-funciona">
     <div class="how-inner">
         <div style="text-align:center;">
@@ -418,7 +371,6 @@
     </div>
 </div>
 
-<!-- COMPLIANCE -->
 <section class="section" id="compliance">
     <div class="compliance-grid">
         <div>
@@ -462,10 +414,7 @@
             </div>
             <div class="timeline">
                 <div class="tl-item">
-                    <div class="tl-left">
-                        <div class="tl-dot" style="background:var(--success)"></div>
-                        <div class="tl-line"></div>
-                    </div>
+                    <div class="tl-left"><div class="tl-dot" style="background:var(--success)"></div><div class="tl-line"></div></div>
                     <div class="tl-content">
                         <div class="tl-date">Ene 2025</div>
                         <div class="tl-text" style="color:var(--success)">LLC constituida</div>
@@ -473,10 +422,7 @@
                     </div>
                 </div>
                 <div class="tl-item">
-                    <div class="tl-left">
-                        <div class="tl-dot" style="background:var(--success)"></div>
-                        <div class="tl-line"></div>
-                    </div>
+                    <div class="tl-left"><div class="tl-dot" style="background:var(--success)"></div><div class="tl-line"></div></div>
                     <div class="tl-content">
                         <div class="tl-date">Mar 2025</div>
                         <div class="tl-text" style="color:var(--success)">EIN asignado</div>
@@ -484,10 +430,7 @@
                     </div>
                 </div>
                 <div class="tl-item">
-                    <div class="tl-left">
-                        <div class="tl-dot" style="background:var(--warning)"></div>
-                        <div class="tl-line"></div>
-                    </div>
+                    <div class="tl-left"><div class="tl-dot" style="background:var(--warning)"></div><div class="tl-line"></div></div>
                     <div class="tl-content">
                         <div class="tl-date">Abr 2025</div>
                         <div class="tl-text" style="color:var(--warning)">Form 5472 — Vence 15 Abr</div>
@@ -495,10 +438,7 @@
                     </div>
                 </div>
                 <div class="tl-item">
-                    <div class="tl-left">
-                        <div class="tl-dot" style="background:var(--subtext)"></div>
-                        <div class="tl-line"></div>
-                    </div>
+                    <div class="tl-left"><div class="tl-dot" style="background:var(--subtext)"></div><div class="tl-line"></div></div>
                     <div class="tl-content">
                         <div class="tl-date">Mar 2026</div>
                         <div class="tl-text">Annual Report — Delaware</div>
@@ -506,9 +446,7 @@
                     </div>
                 </div>
                 <div class="tl-item">
-                    <div class="tl-left">
-                        <div class="tl-dot" style="background:var(--subtext)"></div>
-                    </div>
+                    <div class="tl-left"><div class="tl-dot" style="background:var(--subtext)"></div></div>
                     <div class="tl-content">
                         <div class="tl-date">Próximo ciclo</div>
                         <div class="tl-text">Renovación anual</div>
@@ -522,7 +460,6 @@
 
 <div class="divider"></div>
 
-<!-- CTA FINAL -->
 <section class="cta-section">
     <div class="cta-glow"></div>
     <div class="cta-box">
@@ -538,7 +475,6 @@
     </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
     <div class="footer-inner">
         <a href="/landing.html" class="footer-logo">
@@ -556,5 +492,38 @@
     </div>
 </footer>
 
+<script>
+    (function () {
+        const jwtToken = localStorage.getItem('jwtToken');
+        if (!jwtToken) return;
+
+        try {
+            const payload = JSON.parse(atob(jwtToken.split('.')[1]));
+            if (Date.now() > payload.exp * 1000) {
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('userRole');
+                return;
+            }
+        } catch (e) {
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('userRole');
+            return;
+        }
+
+        const role = localStorage.getItem('userRole');
+        const label = role === 'ADMIN' ? 'Administrador' : 'Mi panel';
+
+        document.getElementById('navCta').innerHTML = `
+            <span style="font-size:13px; color:var(--subtext-2);">Conectado como</span>
+            <a href="/index.html" class="btn btn-primary" style="gap:8px;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                ${label}
+            </a>
+        `;
+    })();
+</script>
 </body>
 </html>
