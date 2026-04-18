@@ -39,6 +39,7 @@
         .auth-box h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; text-align: center; }
         .auth-box p.auth-sub { text-align: center; color: var(--subtext); font-size: 14px; margin-bottom: 28px; }
         .auth-error { background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+        .auth-success { background: var(--success-bg); border: 1px solid rgba(34,197,94,0.3); color: #86efac; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
         .field { margin-bottom: 16px; }
         .field label { display: block; font-size: 13px; font-weight: 500; color: var(--subtext); margin-bottom: 6px; }
         .field input[type="text"], .field input[type="email"], .field input[type="password"] { width: 100%; padding: 11px 14px; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
@@ -52,6 +53,7 @@
         .btn { padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
         .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; }
         .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-ghost { background: transparent; color: var(--subtext); border: 1px solid var(--border-2); }
         .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
         .btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
@@ -138,20 +140,32 @@
         <h2 id="authTitle">Bienvenido de vuelta</h2>
         <p class="auth-sub" id="authSub">Ingresa a tu panel de gestión corporativa</p>
         <div id="authError" class="auth-error"></div>
+        <div id="authSuccess" class="auth-success"></div>
         <div class="field" id="nameField" style="display:none;">
             <label>Nombre completo</label>
             <input type="text" id="authName" placeholder="Juan Pérez">
         </div>
-        <div class="field">
+        <div class="field" id="emailField">
             <label>Correo electrónico</label>
             <input type="email" id="authEmail" placeholder="correo@empresa.com">
         </div>
-        <div class="field">
+        <div class="field" id="passwordField">
             <label>Contraseña</label>
             <input type="password" id="authPassword" placeholder="••••••••">
         </div>
+        <div class="field" id="newPasswordField" style="display:none;">
+            <label>Nueva contraseña</label>
+            <input type="password" id="newPassword" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="field" id="confirmPasswordField" style="display:none;">
+            <label>Confirmar contraseña</label>
+            <input type="password" id="confirmPassword" placeholder="Repite tu contraseña">
+        </div>
         <button class="btn btn-primary" id="authBtn" onclick="handleAuth()">Iniciar Sesión</button>
-        <button class="btn-link" onclick="toggleAuth()">¿No tienes cuenta? Crear una nueva</button>
+        <div id="forgotLink" style="text-align:right; margin-top:6px;">
+            <button class="btn-link" style="width:auto; display:inline; font-size:12px;" onclick="showForgot()">¿Olvidaste tu contraseña?</button>
+        </div>
+        <button class="btn-link" id="toggleLink" onclick="toggleAuth()">¿No tienes cuenta? Crear una nueva</button>
     </div>
 </div>
 
@@ -270,65 +284,197 @@
 </div>
 
 <script>
-    let isLoginMode = true;
+    let authMode = 'login';
+    let pendingResetToken = null;
     let userRole = null;
 
-    function toggleAuth() {
-        isLoginMode = !isLoginMode;
-        document.getElementById('authTitle').innerText = isLoginMode ? 'Bienvenido de vuelta' : 'Crear cuenta';
-        document.getElementById('authSub').innerText = isLoginMode ? 'Ingresa a tu panel de gestión corporativa' : 'Únete a CTS Consulting';
-        document.getElementById('authBtn').innerText = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
-        document.querySelector('.btn-link').innerText = isLoginMode ? '¿No tienes cuenta? Crear una nueva' : '¿Ya tienes cuenta? Inicia sesión';
-        document.getElementById('nameField').style.display = isLoginMode ? 'none' : 'block';
+    function setAuthUI({ title, sub, btnText, showName, showEmail, showPassword, showNewPass, showConfirm, showForgotLink, toggleText, showToggle }) {
+        document.getElementById('authTitle').innerText = title;
+        document.getElementById('authSub').innerText = sub;
+        document.getElementById('authBtn').innerText = btnText;
+        document.getElementById('nameField').style.display = showName ? 'block' : 'none';
+        document.getElementById('emailField').style.display = showEmail ? 'block' : 'none';
+        document.getElementById('passwordField').style.display = showPassword ? 'block' : 'none';
+        document.getElementById('newPasswordField').style.display = showNewPass ? 'block' : 'none';
+        document.getElementById('confirmPasswordField').style.display = showConfirm ? 'block' : 'none';
+        document.getElementById('forgotLink').style.display = showForgotLink ? 'block' : 'none';
+        document.getElementById('toggleLink').style.display = showToggle ? 'block' : 'none';
+        if (showToggle) document.getElementById('toggleLink').innerText = toggleText;
         document.getElementById('authError').style.display = 'none';
+        document.getElementById('authSuccess').style.display = 'none';
+    }
+
+    function showLogin() {
+        authMode = 'login';
+        document.getElementById('toggleLink').onclick = toggleAuth;
+        setAuthUI({
+            title: 'Bienvenido de vuelta', sub: 'Ingresa a tu panel de gestión corporativa',
+            btnText: 'Iniciar Sesión', showName: false, showEmail: true, showPassword: true,
+            showNewPass: false, showConfirm: false, showForgotLink: true,
+            showToggle: true, toggleText: '¿No tienes cuenta? Crear una nueva'
+        });
+    }
+
+    function toggleAuth() {
+        if (authMode === 'login') {
+            authMode = 'register';
+            document.getElementById('toggleLink').onclick = toggleAuth;
+            setAuthUI({
+                title: 'Crear cuenta', sub: 'Únete a CTS Consulting',
+                btnText: 'Registrarse', showName: true, showEmail: true, showPassword: true,
+                showNewPass: false, showConfirm: false, showForgotLink: false,
+                showToggle: true, toggleText: '¿Ya tienes cuenta? Inicia sesión'
+            });
+        } else {
+            showLogin();
+        }
+    }
+
+    function showForgot() {
+        authMode = 'forgot';
+        document.getElementById('toggleLink').onclick = showLogin;
+        setAuthUI({
+            title: 'Recuperar contraseña', sub: 'Ingresa tu correo y te enviaremos un enlace',
+            btnText: 'Enviar enlace de recuperación', showName: false, showEmail: true, showPassword: false,
+            showNewPass: false, showConfirm: false, showForgotLink: false,
+            showToggle: true, toggleText: '← Volver al inicio de sesión'
+        });
+    }
+
+    function showReset(token) {
+        pendingResetToken = token;
+        authMode = 'reset';
+        setAuthUI({
+            title: 'Nueva contraseña', sub: 'Elige una contraseña segura para tu cuenta',
+            btnText: 'Cambiar contraseña', showName: false, showEmail: false, showPassword: false,
+            showNewPass: true, showConfirm: true, showForgotLink: false,
+            showToggle: false, toggleText: ''
+        });
+        window.history.replaceState({}, document.title, '/index.html');
     }
 
     async function handleAuth() {
-    const url = isLoginMode ? '/api/auth/login' : '/api/auth/register';
-    const payload = {
-        email: document.getElementById('authEmail').value,
-        password: document.getElementById('authPassword').value
-    };
-    if (!isLoginMode) payload.name = document.getElementById('authName').value;
+        const errEl = document.getElementById('authError');
+        const successEl = document.getElementById('authSuccess');
+        errEl.style.display = 'none';
+        successEl.style.display = 'none';
 
-    const errEl = document.getElementById('authError');
-    errEl.style.display = 'none';
-
-    try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            localStorage.setItem('jwtToken', data.token);
-            localStorage.setItem('userRole', data.role);
-            checkAuth();
-        } else {
-            const body = await res.json().catch(() => ({}));
-            if (isLoginMode) {
-                errEl.innerText = res.status === 401 || res.status === 403
-                    ? 'Correo o contraseña incorrectos'
-                    : (body.error || 'Error al iniciar sesión');
-            } else {
-                if (body.error) {
-                    errEl.innerText = body.error;
-                } else if (body.fields) {
-                    const firstField = Object.values(body.fields)[0];
-                    errEl.innerText = firstField || 'Revisa los datos ingresados';
+        if (authMode === 'login') {
+            const payload = {
+                email: document.getElementById('authEmail').value,
+                password: document.getElementById('authPassword').value
+            };
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('jwtToken', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    checkAuth();
                 } else {
-                    errEl.innerText = 'Error al crear la cuenta';
+                    const body = await res.json().catch(() => ({}));
+                    errEl.innerText = (res.status === 401 || res.status === 403)
+                        ? 'Correo o contraseña incorrectos'
+                        : (body.error || 'Error al iniciar sesión');
+                    errEl.style.display = 'block';
                 }
+            } catch (e) {
+                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
+                errEl.style.display = 'block';
             }
-            errEl.style.display = 'block';
+
+        } else if (authMode === 'register') {
+            const payload = {
+                name: document.getElementById('authName').value,
+                email: document.getElementById('authEmail').value,
+                password: document.getElementById('authPassword').value
+            };
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('jwtToken', data.token);
+                    localStorage.setItem('userRole', data.role);
+                    checkAuth();
+                } else {
+                    const body = await res.json().catch(() => ({}));
+                    if (body.fields) {
+                        errEl.innerText = Object.values(body.fields)[0] || 'Revisa los datos ingresados';
+                    } else {
+                        errEl.innerText = body.error || 'Error al crear la cuenta';
+                    }
+                    errEl.style.display = 'block';
+                }
+            } catch (e) {
+                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
+                errEl.style.display = 'block';
+            }
+
+        } else if (authMode === 'forgot') {
+            const email = document.getElementById('authEmail').value;
+            try {
+                const res = await fetch('/api/auth/forgot-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const body = await res.json().catch(() => ({}));
+                if (res.ok) {
+                    successEl.innerText = body.message || 'Si el correo está registrado, recibirás un enlace pronto.';
+                    successEl.style.display = 'block';
+                    document.getElementById('authEmail').value = '';
+                    const btn = document.getElementById('authBtn');
+                    btn.disabled = true;
+                    setTimeout(() => { btn.disabled = false; }, 30000);
+                } else {
+                    errEl.innerText = body.error || 'No se pudo procesar la solicitud';
+                    errEl.style.display = 'block';
+                }
+            } catch (e) {
+                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
+                errEl.style.display = 'block';
+            }
+
+        } else if (authMode === 'reset') {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            if (newPass.length < 8) {
+                errEl.innerText = 'La contraseña debe tener al menos 8 caracteres';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newPass !== confirmPass) {
+                errEl.innerText = 'Las contraseñas no coinciden';
+                errEl.style.display = 'block';
+                return;
+            }
+            try {
+                const res = await fetch('/api/auth/reset-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: pendingResetToken, newPassword: newPass })
+                });
+                const body = await res.json().catch(() => ({}));
+                if (res.ok) {
+                    successEl.innerText = '✓ Contraseña actualizada. Ya puedes iniciar sesión.';
+                    successEl.style.display = 'block';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    setTimeout(showLogin, 2500);
+                } else {
+                    errEl.innerText = body.error || 'No se pudo cambiar la contraseña';
+                    errEl.style.display = 'block';
+                }
+            } catch (e) {
+                errEl.innerText = 'Error de conexión. Intenta nuevamente.';
+                errEl.style.display = 'block';
+            }
         }
-    } catch (e) {
-        errEl.innerText = 'Error de conexión. Intenta nuevamente.';
-        errEl.style.display = 'block';
     }
-}
 
     function logout() {
         localStorage.removeItem('jwtToken');
@@ -412,9 +558,7 @@
             document.getElementById('physicalPresence').checked = false;
             closeModal('llcModal');
             loadUserData();
-        } else if (res.status === 401) {
-            logout();
-        }
+        } else if (res.status === 401) { logout(); }
     }
 
     async function downloadPdf(id, name, isAdmin = false) {
@@ -478,21 +622,16 @@
         const res = await fetch('/api/llc/all', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-
-        const total = data.length;
-        const active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length;
-        const needs5472 = data.filter(l => l.requiresForm5472).length;
-
+        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
+                pending = data.filter(l => l.status === 'PENDING').length,
+                needs5472 = data.filter(l => l.requiresForm5472).length;
         document.getElementById('userStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg></div><div class="stat-label">Total LLCs</div><div class="stat-value">${total}</div><div class="stat-meta">En tu portafolio</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">En proceso</div><div class="stat-value">${pending}</div><div class="stat-meta">Pendientes de activar</div></div>
-            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>
-        `;
-
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div class="stat-label">Form 5472</div><div class="stat-value">${needs5472}</div><div class="stat-meta">Obligaciones IRS</div></div>`;
         const tbody = document.getElementById('userTableBody');
-        if (data.length === 0) {
+        if (!data.length) {
             tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🏢</div>No tienes entidades registradas.<br>Crea tu primera LLC para comenzar.</div></td></tr>';
             return;
         }
@@ -509,29 +648,23 @@
                     <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}')">${downloadIcon} OA</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLlc(${l.id})">${deleteIcon}</button>
                 </div></td>
-            </tr>
-        `).join('');
+            </tr>`).join('');
     }
 
     async function loadAdminData() {
         const res = await fetch('/api/admin/llcs', { headers: { 'Authorization': 'Bearer ' + token() } });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-
-        const total = data.length;
-        const active = data.filter(l => l.status === 'ACTIVE').length;
-        const pending = data.filter(l => l.status === 'PENDING').length;
-        const withEin = data.filter(l => l.ein).length;
-
+        const total = data.length, active = data.filter(l => l.status === 'ACTIVE').length,
+                pending = data.filter(l => l.status === 'PENDING').length,
+                withEin = data.filter(l => l.ein).length;
         document.getElementById('adminStats').innerHTML = `
             <div class="stat-card"><div class="stat-icon si-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg></div><div class="stat-label">Total entidades</div><div class="stat-value">${total}</div><div class="stat-meta">En toda la plataforma</div></div>
             <div class="stat-card"><div class="stat-icon si-green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Activas</div><div class="stat-value">${active}</div><div class="stat-meta">Completamente operativas</div></div>
             <div class="stat-card"><div class="stat-icon si-yellow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-label">Pendientes</div><div class="stat-value">${pending}</div><div class="stat-meta">Requieren gestión</div></div>
-            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>
-        `;
-
+            <div class="stat-card"><div class="stat-icon si-purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div><div class="stat-label">Con EIN</div><div class="stat-value">${withEin}</div><div class="stat-meta">EIN asignado</div></div>`;
         const tbody = document.getElementById('adminTableBody');
-        if (data.length === 0) {
+        if (!data.length) {
             tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div>No hay entidades registradas aún.</div></td></tr>';
             return;
         }
@@ -549,11 +682,21 @@
                     <button class="btn btn-success btn-sm" onclick="downloadPdf(${l.id}, '${l.businessName}', true)">OA</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLlcAdmin(${l.id})">${deleteIcon}</button>
                 </div></td>
-            </tr>
-        `).join('');
+            </tr>`).join('');
     }
 
-    window.onload = checkAuth;
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        const resetToken = params.get('reset');
+        if (resetToken) {
+            showReset(resetToken);
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('appSection').style.display = 'none';
+        } else {
+            showLogin();
+            checkAuth();
+        }
+    };
 </script>
 </body>
 </html>
